@@ -73,7 +73,7 @@
 	export default {
 		data() {
 			return {
-				menuActive: "info",
+				menuActive: "1-2",
 				ruleForm: {
 					memberCate: '超级会员',
 					login: 'huiyuannetsun',

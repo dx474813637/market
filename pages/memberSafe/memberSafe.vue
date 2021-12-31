@@ -95,7 +95,7 @@
 	export default {
 		data() {
 			return {
-				menuActive: 'safe'
+				menuActive: '1-3'
 			}
 		},
 		onLoad() {

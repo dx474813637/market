@@ -18,11 +18,11 @@
 	export default {
 		data() {
 			return {
-				menuActive: 'index'
+				menuActive: '1-1',
 			}
-		},
-		onLoad() {
-
+		}, 
+		computed: {
+			
 		},
 		methods: {
 

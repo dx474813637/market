@@ -13,8 +13,12 @@
  */
 /* uni.scss */
 @import 'uview-ui/theme.scss';
-/* 颜色变量 */
 
+/* 颜色变量 */
+$u-error: #ed5656;
+$u-error-dark: #dd5050;
+$u-primary: #804ED1;
+$u-primary-dark: #7348c2;
 $theme-color: #804ED1;
 $theme-bg-color: lighten($theme-color, 37%);
 /* 行为相关颜色 */

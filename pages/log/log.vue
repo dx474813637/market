@@ -60,7 +60,7 @@
 	export default {
 		data() {
 			return {
-				menuActive: 'log',
+				menuActive: '1-4',
 				form: {
 					date: '',
 					status: '0'

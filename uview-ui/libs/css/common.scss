@@ -33,6 +33,7 @@
 // App.vue的样式会被uni-app的view元素的自带border属性覆盖，导致无效
 // 综上，这是uni-app的缺陷导致我们为了多端兼容，而必须要加上!important
 // 移动端兼容性较好，直接使用0.5px去实现细边框，不使用伪元素形式实现
+// /* #endif */
 .u-border {
 	border-width: 0.5px!important;
 	border-color: $u-border-color!important; 
@@ -70,7 +71,7 @@
     border-top-style: solid;
     border-bottom-style: solid;
 }
-// /* #endif */
+
 
 // 去除button的所有默认样式，让其表现跟普通的view、text元素一样
 .u-reset-button {

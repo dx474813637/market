@@ -4,7 +4,7 @@
 		<view class="main u-flex u-row-center u-p-40">
 			<view class="wrapper u-flex u-col-top">
 				<view class="wrap-item menu">
-					<d-menu :active="menuActive" :key="timestamp"></d-menu>
+					<d-menu :active="menuActive"></d-menu>
 				</view>
 				<view class="wrap-item content">
 					<view class="content-header u-flex u-row-between u-border-bottom">

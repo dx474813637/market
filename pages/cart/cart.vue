@@ -241,11 +241,10 @@
 					this.$message({
 						type: 'success',
 						message: '删除成功!'
-					});
+					}); 
 				}).catch(() => {
-					       
-				});
-				      
+					        
+				});  
 			},
 			handleDelet(id) {
 				this.otherCheckedId = this.cart.filter(item => item.id != id && item.checked).map(ele => ele.id)

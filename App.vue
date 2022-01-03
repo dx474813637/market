@@ -21,7 +21,15 @@
 		user-select: text;
 		background-color: #f8f8f8;
 	}
-	
+	::-webkit-scrollbar {
+		background-color: #f8f8f8;
+	}
+	::-webkit-scrollbar-button {
+		background-color: $theme-bg-color;
+	}
+	::-webkit-scrollbar-thumb {
+		background-color: $theme-bg-color;
+	}
 	.d-theme-color {
 		color: $theme-color!important;
 	}

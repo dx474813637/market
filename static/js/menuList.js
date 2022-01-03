@@ -40,7 +40,7 @@ export default [
 		]
 	},
 	{
-		label: '商城中心',
+		label: '商城管理',
 		type: 'title',
 		index: '2',
 		icon: 'custom-icon-shopping',
@@ -80,34 +80,42 @@ export default [
 		]
 	},
 	{
-		label: '资金中心',
+		label: '资金管理',
 		type: 'title',
 		index: '3',
 		icon: 'custom-icon-transaction',
 		children: [
 			{
+				label: '资金中心',
+				type: 'link-navigator',
+				url: '/pages/money_center/money_center',
+				icon: '',
+				active: 'money_center',
+				index: '3-1',
+			},
+			{
 				label: '支付平台账号',
 				type: 'link-navigator',
-				url: '',
+				url: '/pages/sinopay/sinopay',
 				icon: '',
-				active: 'pay_login',
-				index: '3-1',
+				active: 'sinopay',
+				index: '3-2',
 			},
 			{
 				label: '我的现金账户',
 				type: 'link-navigator',
-				url: '',
+				url: '/pages/sinopay_account_list/sinopay_account_list',
 				icon: '',
-				active: 'cash_account',
-				index: '3-2',
+				active: 'sinopay_account_list',
+				index: '3-3',
 			},
 			{
 				label: '现金付款明细',
 				type: 'link-navigator',
-				url: '',
+				url: '/pages/sinopay_pay_list/sinopay_pay_list',
 				icon: '',
-				active: 'cash_list',
-				index: '3-3',
+				active: 'sinopay_pay_list',
+				index: '3-4',
 			},
 		]
 	},

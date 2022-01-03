@@ -249,6 +249,7 @@
 					auto: 1,
 				},
 				currentRow: {},
+				checkedList: [],
 				addrList: [{
 						address: "莫干山路187易盛大厦12楼",
 						auto: 1,
@@ -318,24 +319,20 @@
 		},
 		computed: {
 			...mapState(['cart']),
-			totalChecked() {
-				return this.cart.filter(ele => ele.checked)
-			},
 			totalNum() {
-				return this.totalChecked.reduce((sum, ele) => {
+				return this.checkedList.reduce((sum, ele) => {
 					return sum + ele.num
 				}, 0)
 			},
 			totalPrice() {
 				let total = 0;
-				total = this.totalChecked.reduce((sum, ele) => {
+				total = this.checkedList.reduce((sum, ele) => {
 					let p = 0
 					if (uni.$u.test.number(ele.price)) {
 						p = ele.price * ele.num
 					}
 					return sum + p
 				}, 0)
-				console.log(total)
 				return total
 			},
 		},
@@ -347,28 +344,25 @@
 			filterListData() {
 				let list1 = []
 				let list2 = []
-				this.cart.forEach(ele => {
-					if (ele.checked) {
-						if (ele.self && ele.self.includes("2")) {
-							this.ziti = 1
-						}
+				this.checkedList = this.cart.filter(ele => ele.checked)
+				this.checkedList.forEach(ele => {
+					if (ele.self && ele.self.includes("2")) {
+						this.ziti = 1
+					}
 
-						if ((ele.self && ele.self.includes("1")) && ele.talk_price == 2) {
-							list2.push(ele)
-						} else {
-							list1.push(ele)
-						}
+					if ((ele.self && ele.self.includes("1")) && ele.talk_price == 2) {
+						list2.push(ele)
+					} else {
+						list1.push(ele)
 					}
 				})
 				this.list1 = list1
 				this.list2 = list2
 			},
 			handleCurrentChange(val) {
-				console.log(val)
 				this.currentRow = val;
 			},
 			handleConfirmAddr() {
-				console.log(this.currentRow)
 				if (this.currentRow.id) {
 					this.addressData = this.currentRow;
 					this.addrTableDialog = false
@@ -386,7 +380,7 @@
 					type: 'success'
 				}).then(() => {
 					uni.redirectTo({
-						url: '/pages/orderDetail/orderDetail'
+						url: `/pages/orderDetail/orderDetail`
 					})
 				}).catch(() => {
 					uni.redirectTo({

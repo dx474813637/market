@@ -38,12 +38,11 @@
 			active: {
 				type: String,
 				default: "1-1"
-			}
+			},
 		},
 		created() {
-			if(!this.menuActive) {
-				this.updatemenuActive(this.active)
-			}
+			this.updatemenuActive(this.active)
+			
 		},
 		data() {
 			return {

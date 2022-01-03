@@ -464,7 +464,7 @@
 		flex: 0 0 49%;
 		margin-left: 2%;
 		margin-bottom: 1%;
-		background-color: lighten($theme-color, 43%);
+		background-color: lighten($theme-color, 41%);
 		border-radius: 5px;
 		&:nth-of-type(2n-1) {
 			margin-left: 0;

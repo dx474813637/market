@@ -23,6 +23,8 @@
 	}
 	::-webkit-scrollbar {
 		background-color: #f8f8f8;
+		width: 8px;
+		height: 8px;
 	}
 	::-webkit-scrollbar-button {
 		background-color: $theme-bg-color;

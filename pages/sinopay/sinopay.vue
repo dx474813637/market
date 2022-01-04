@@ -58,10 +58,16 @@
 								<view class="sinopay-label">支付密码</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">
-									<el-button type="text" class="u-p-t-0 u-p-b-0">点击设置</el-button>
-									<el-button type="text" class="u-p-t-0 u-p-b-0">修改密码</el-button>
-									<el-button type="text" class="u-p-t-0 u-p-b-0">忘记密码</el-button>
+								<view class="sinopay-info u-flex">
+									<navigator url="" class="u-m-r-20">
+										<el-button type="text" class="u-p-t-0 u-p-b-0">点击设置</el-button>
+									</navigator>
+									<navigator url="" class="u-m-r-20">
+										<el-button type="text" class="u-p-t-0 u-p-b-0">修改密码</el-button>
+									</navigator>
+									<navigator url="" class="u-m-r-20">
+										<el-button type="text" class="u-p-t-0 u-p-b-0">忘记密码</el-button>
+									</navigator>
 								</view>
 							</el-col>
 						</el-row>
@@ -88,9 +94,7 @@
 							<el-col>
 								<view class="sinopay-info u-flex">
 									<el-button type="primary" plain size="mini">解除绑定</el-button>
-									<navigator url="/pages/sinopay_account/sinopay_account" class="u-p-l-20">
-										<el-button type="primary" size="mini">开通资金账户</el-button>
-									</navigator>
+									<el-button type="primary" size="mini" @click="handleTakeAccount">开通资金账户</el-button>
 									
 								</view>
 							</el-col>
@@ -101,10 +105,10 @@
 							</el-col>
 							<el-col>
 								<view class="sinopay-info u-flex">
-									<navigator url="/pages/sinopay_account/sinopay_account">
+									<navigator url="/pages/sinopay_account/sinopay_account" class="u-m-r-20">
 										<el-button type="text" class="u-p-t-0 u-p-b-0">付款账户</el-button>
 									</navigator>
-									<navigator url="/pages/sinopay_account/sinopay_account">
+									<navigator url="/pages/sinopay_account/sinopay_account" class="u-m-r-20">
 										<el-button type="text" class="u-p-t-0 u-p-b-0">收款账户</el-button>
 									</navigator>
 								</view>
@@ -129,6 +133,19 @@
 			
 		},
 		methods: {
+			handleTakeAccount() {
+				this.$confirm('是否开通支付平台向下的资金账户?', '提示', {
+				  confirmButtonText: '确定',
+				  cancelButtonText: '取消',
+				  type: 'warning'
+				}).then(() => {
+				  uni.navigateTo({
+					url: "/pages/sinopay_account/sinopay_account"
+				  })
+				}).catch(() => {
+						 
+				});
+			}
 		}
 	}
 </script>

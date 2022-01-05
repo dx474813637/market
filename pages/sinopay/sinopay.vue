@@ -50,7 +50,11 @@
 								<view class="sinopay-label">登录密码</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">修改支付账号登录密码</view>
+								<view class="sinopay-info">
+									<navigator url="/pages/sinopay_safe_login_pwd/sinopay_safe_login_pwd" class="u-m-r-20">
+										<el-button type="text" class="u-p-t-0 u-p-b-0">修改支付账号登录密码</el-button>
+									</navigator>
+								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -59,13 +63,13 @@
 							</el-col>
 							<el-col>
 								<view class="sinopay-info u-flex">
-									<navigator url="" class="u-m-r-20">
+									<navigator url="/pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd" class="u-m-r-20">
 										<el-button type="text" class="u-p-t-0 u-p-b-0">点击设置</el-button>
 									</navigator>
-									<navigator url="" class="u-m-r-20">
+									<navigator url="/pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd" class="u-m-r-20">
 										<el-button type="text" class="u-p-t-0 u-p-b-0">修改密码</el-button>
 									</navigator>
-									<navigator url="" class="u-m-r-20">
+									<navigator url="/pages/sinopay_safe_pay_forget/sinopay_safe_pay_forget" class="u-m-r-20">
 										<el-button type="text" class="u-p-t-0 u-p-b-0">忘记密码</el-button>
 									</navigator>
 								</view>
@@ -188,11 +192,11 @@
 				.content-sinopay {
 					padding: 20px 30px;
 					.el-row {
-						border-left: 0.5px solid #e7e7e7;
-						border-right: 0.5px solid #e7e7e7;
-						border-top: 0.5px solid #e7e7e7;
+						border-left: 1px solid #e7e7e7;
+						border-right: 1px solid #e7e7e7;
+						border-top: 1px solid #e7e7e7;
 						&:last-child {
-							border-bottom: 0.5px solid #e7e7e7;
+							border-bottom: 1px solid #e7e7e7;
 						}
 						.el-col {
 							padding: 5px 10px;
@@ -201,13 +205,13 @@
 							display: flex;
 							align-items: center;
 							font-size: 14px;
-							border-right: 0.5px solid #e7e7e7;
+							border-right: 1px solid #e7e7e7;
 							&:last-child {
 								border-right: 0;
 							}
 							&.sinopay-label-col {
 								background-color: #F5F7FA;
-								border-right: 0.5px solid #e7e7e7;
+								border-right: 1px solid #e7e7e7;
 								color: #666;
 								&.title .sinopay-label {
 									color: #333;

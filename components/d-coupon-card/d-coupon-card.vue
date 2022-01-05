@@ -67,7 +67,7 @@
 			.c-h-item {
 				.coupon-mk {
 					font-size: 14px;
-					border: 0.5px solid #ff8282;
+					border: 1px solid #ff8282;
 					padding: 3px 15px;
 					border-radius: 3px;
 					margin-top: 8px;

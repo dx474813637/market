@@ -12,7 +12,7 @@
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
-							<view class="header-title">收款账户</view>
+							<view class="header-title">{{title}}</view>
 						</view>
 					</view>
 					<view class="content-sinopay">
@@ -21,15 +21,15 @@
 								<view class="sinopay-label">资金账户名</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">沈凯婷</view>
+								<view class="sinopay-info">{{info.info.name}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">付款账户</view>
+								<view class="sinopay-label">{{title}}</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">1100000190 - 正常</view>
+								<view class="sinopay-info">{{info.info.user_fundaccno}} - 正常</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -37,7 +37,7 @@
 								<view class="sinopay-label">手机</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">13548946552</view>
+								<view class="sinopay-info">{{info.info.mobile}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -46,10 +46,10 @@
 							</el-col>
 							<el-col>
 								<view class="sinopay-info u-flex">
-									<view>1.17</view>
-									<navigator url="/pages/recharge/recharge" class="u-m-l-40">
+									<view>{{info.info.bal_freeze}}</view>
+									<!-- <navigator url="/pages/recharge/recharge" class="u-m-l-40">
 										<el-button type="primary" size="mini">提现</el-button>
-									</navigator>
+									</navigator> -->
 									<navigator url="/pages/withdrawal/withdrawal" class="u-m-l-40">
 										<el-button type="primary" size="mini">充值</el-button>
 									</navigator>
@@ -70,7 +70,7 @@
 								<view class="sinopay-label">冻结金额</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">1.17</view>
+								<view class="sinopay-info">{{info.info.bal_freeze}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -79,11 +79,11 @@
 							</el-col>
 							<el-col>
 								<view class="sinopay-info">
-									<navigator url="">1100000187</navigator>
+									<el-button type="text" class="u-p-0" @click="handleGoRelationAcc">{{info.info.relation_id}}</el-button>
 								</view>
 							</el-col>
 						</el-row>
-						<el-row type="flex" align="middle">
+						<!-- <el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">提现列表</view>
 							</el-col>
@@ -94,7 +94,7 @@
 									</navigator>
 								</view>
 							</el-col>
-						</el-row>
+						</el-row> -->
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">充值列表</view>
@@ -124,7 +124,7 @@
 								<view class="sinopay-label">创建时间</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">2020-12-04 10:24:35</view>
+								<view class="sinopay-info">{{info.info.ctime}}</view>
 							</el-col>
 						</el-row>
 						
@@ -173,6 +173,7 @@
 		data() {
 			return {
 				menuActive: '3-3',
+				type: "1", //1 付款  2 收款
 				tableData: [
 					{
 						id: '330204199401258774',
@@ -181,13 +182,54 @@
 						bankid: '955****237714',
 						status: '已绑定'
 					}
-				]
+				],
+				info: {
+					info: {}
+				}
 			}
 		}, 
+		onLoad(opt) {
+			if(opt && opt.type) {
+				this.type = opt.type;
+			}
+			this.getData()
+		},
 		computed: {
-			
+			title() {
+				if(this.type == 2) {
+					return '收款账户'
+				}else {
+					return '付款账户'
+				}
+			},
+			apiUrl() {
+				if(this.type == 2) {
+					return 'sino_zh2.html'
+				}else {
+					return 'sino_zh1.html'
+				}
+			},
 		},
 		methods: {
+			async getData() {
+				let data = await this.$http.get(this.apiUrl)
+				console.log(data)
+				this.info = data[this.type == 2 ? 'user_fundaccno_s' : 'user_fundaccno_b']
+			},
+			async handleGoRelationAcc() {
+				if(this.type == 2) {
+					this.type = 1
+				}else {
+					this.type = 2
+				}
+				uni.showLoading({
+					title: '账户数据加载中'
+				})
+				await this.getData();
+				uni.showToast({
+					title: '数据加载完成'
+				})
+			}
 		}
 	}
 </script>
@@ -236,11 +278,11 @@
 						padding: 10px 0;
 					}
 					.el-row {
-						border-left: 0.5px solid #e7e7e7;
-						border-right: 0.5px solid #e7e7e7;
-						border-top: 0.5px solid #e7e7e7;
+						border-left: 1px solid #e7e7e7;
+						border-right: 1px solid #e7e7e7;
+						border-top: 1px solid #e7e7e7;
 						&:last-child {
-							border-bottom: 0.5px solid #e7e7e7;
+							border-bottom: 1px solid #e7e7e7;
 						}
 						.el-col {
 							padding: 5px 10px;
@@ -249,13 +291,13 @@
 							display: flex;
 							align-items: center;
 							font-size: 14px;
-							border-right: 0.5px solid #e7e7e7;
+							border-right: 1px solid #e7e7e7;
 							&:last-child {
 								border-right: 0;
 							}
 							&.sinopay-label-col {
 								background-color: #F5F7FA;
-								border-right: 0.5px solid #e7e7e7;
+								border-right: 1px solid #e7e7e7;
 								color: #666;
 								&.title .sinopay-label {
 									color: #333;

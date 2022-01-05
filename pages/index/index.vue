@@ -63,7 +63,7 @@
 								  	<el-table-column label="卖家" prop="c_name">
 								  	</el-table-column>
 								  	<el-table-column label="下单时间" prop="ctime" width="180px">
-								  		<!-- <template slot-scope="scope">
+								  		<!-- <template slot-scope="scope"> 
 								  			<view>{{scope.row.ctime.split(' ')[0]}}</view>
 								  			<view>{{scope.row.ctime.split(' ')[1]}}</view>
 								  		</template> -->
@@ -492,7 +492,7 @@
 							padding: 10px;
 							font-size: 12px;
 							color: #666;
-							border: 0.5px solid #e7e7e7;
+							border: 1px solid #e7e7e7;
 							&:first-child {
 								// border-left: 0;
 								border-radius: 0 3px 3px 0;

@@ -496,7 +496,7 @@
 					.ykj-label {
 						display: inline-block;
 						background-color: lighten($theme-color, 42%);
-						border: 0.5px solid lighten($theme-color, 20%);
+						border: 1px solid lighten($theme-color, 20%);
 						border-radius: 3px;
 						line-height: 1em;
 						font-size: 12px;

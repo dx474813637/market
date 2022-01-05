@@ -40,7 +40,7 @@
 												<i class="custom-icon-verified custom-icon"></i>
 												<view class="btn-title">付款记录</view>
 											</navigator>
-											<navigator url=""  class="item-btn">
+											<navigator url="/pages/sinpay_safe/sinpay_safe"  class="item-btn">
 												<i class="custom-icon-verified custom-icon"></i>
 												<view class="btn-title">安全设置</view>
 											</navigator>
@@ -166,12 +166,17 @@
 			}
 		}, 
 		onLoad() {
-			this.showRegDialog()
+			// this.showRegDialog()
+			this.getData()
 		},
 		computed: {
 			
 		},
 		methods: {
+			async getData() {
+				let data = await this.$http.get('moneyCenter3.html')
+				console.log(data)
+			},
 			handleChangeFlag() {
 				this.dialogVisible = !this.dialogVisible
 			},

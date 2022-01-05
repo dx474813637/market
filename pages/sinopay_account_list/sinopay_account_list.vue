@@ -127,12 +127,12 @@
 					padding: 20px 30px;
 
 					.el-row {
-						border-left: 0.5px solid #e7e7e7;
-						border-right: 0.5px solid #e7e7e7;
-						border-top: 0.5px solid #e7e7e7;
+						border-left: 1px solid #e7e7e7;
+						border-right: 1px solid #e7e7e7;
+						border-top: 1px solid #e7e7e7;
 
 						&:last-child {
-							border-bottom: 0.5px solid #e7e7e7;
+							border-bottom: 1px solid #e7e7e7;
 						}
 
 						.el-col {
@@ -142,7 +142,7 @@
 							display: flex;
 							align-items: center;
 							font-size: 14px;
-							border-right: 0.5px solid #e7e7e7;
+							border-right: 1px solid #e7e7e7;
 
 							&:last-child {
 								border-right: 0;
@@ -150,7 +150,7 @@
 
 							&.sinopay-label-col {
 								background-color: #F5F7FA;
-								border-right: 0.5px solid #e7e7e7;
+								border-right: 1px solid #e7e7e7;
 								color: #666;
 
 								&.title .sinopay-label {

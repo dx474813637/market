@@ -4,7 +4,7 @@ import Request from './luch-request/index.js'
 
 const http = new Request()
 http.setConfig((config) => { /* 设置全局配置 */
-	config.baseURL = 'http://dingxiang.netsun.testwebsite.cn/shopDiy/' /* 根域名不同 */
+	config.baseURL = 'http://market.netsun.testwebsite.cn/' /* 根域名不同 */
 	config.header = {
 		...config.header,
 		// 'content-type': 'application/x-www-form-urlencoded',
@@ -26,7 +26,7 @@ http.interceptors.request.use((config) => { /* 请求之前拦截器。可以使
 
 
 http.interceptors.response.use(async (response) => { /* 请求之后拦截器。可以使用async await 做异步操作  */
-	
+	uni.hideLoading()
 	if (response.hasOwnProperty('data')) {
 		if (response.data.code != 1) {
 			if (response.data.msg) {
@@ -39,7 +39,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
 			}
 		}
 	} 
-	return response
+	return response.data
 }, (response) => { // 请求错误做点什么。可以使用async await 做异步操作
 	console.log(response)
 	return Promise.reject(response)

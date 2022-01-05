@@ -58,7 +58,7 @@
 	background: linear-gradient(to left, #eef2f3, #aabdcc); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 	border-radius: 5px;
-	border: 0.5px solid #eee;
+	border: 1px solid #eee;
 	padding: 10px 20px;
 	box-sizing: border-box;
 	color: #000;

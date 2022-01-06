@@ -50,10 +50,10 @@
 					</view>
 					<view class="content-addr-info">
 						<el-table :data="addrData" style="width: 100%">
-							<el-table-column label="收货信息 - 卖家送货">
-								<el-table-column prop="name" label="收货人" width="200">
+							<el-table-column :label="`收货信息 - ${info.list.buyGetType}`">
+								<el-table-column prop="name" label="收货人" width="200" v-if="info.list.address_name">
 								</el-table-column>
-								<el-table-column prop="phone" label="手机" width="200">
+								<el-table-column prop="phone" label="手机" width="200" v-if="info.list.address_mobile">
 								</el-table-column>
 								<el-table-column prop="address" label="收货地址">
 								</el-table-column>
@@ -66,13 +66,11 @@
 								<view class="item u-flex">
 									<view class="order-label">订单ID：{{info.list.id}}</view>
 									<view class="order-label">卖家：{{info.list.c_name}}</view>
-									<a href="" target="_blank">
-										<el-button type="primary" plain size="mini" icon="" >联系卖家</el-button>
-									</a>
+									<view class="order-label">收货方式：{{info.list.buyGetType}}</view>
 									
 								</view>
 								<view class="item u-flex">
-									<el-button type="danger" plain size="mini" icon="" @click="handleExitOrder">取消订单</el-button>
+									
 								</view>
 							</el-col>
 						</el-row>
@@ -81,15 +79,7 @@
 								<view class="order-label">产品总价</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
-							</el-col>
-						</el-row>
-						<el-row type="flex" align="middle" :gutter="colGutter">
-							<el-col :span="5" class="order-label-col">
-								<view class="order-label">运费</view>
-							</el-col>
-							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.pay_price}} 元</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle" :gutter="colGutter">
@@ -97,7 +87,7 @@
 								<view class="order-label">订立现金价格</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.pay_price}} 元</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle" :gutter="colGutter">
@@ -105,7 +95,7 @@
 								<view class="order-label">订单状态</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.toState}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle" :gutter="colGutter">
@@ -114,8 +104,66 @@
 							</el-col>
 							<el-col>
 								<view class="order-info u-flex">
-									{{info.list.pay_price}}
-									<el-button type="primary" class="u-m-l-30" size="mini" @click="codeFormDialog = true">确认收货</el-button>
+									<template v-if="info.list.pay_status == 0">
+										<template v-if="info.list.pay_tool == 2">
+											--
+										</template>
+										<template v-if="info.list.pay_tool != 2">
+											等待支付
+										</template>
+									</template>
+									<template v-if="info.list.pay_status == 1">
+										等待支付
+									</template>
+									<template v-if="info.list.pay_status == 2">
+										退款中
+									</template>
+									<template v-if="info.list.pay_status == 3">
+										<template v-if="info.list.tran_state == 0">
+											等待卖家发货
+										</template>
+										<template v-if="info.list.tran_state == 1">
+											等待收货
+										</template>
+										<template v-if="(info.list.tran_state == 4) && (info.list.pay_tool == 1) && (info.list.address_id != -1)">
+											买家资金已冻结
+										</template>
+									</template>
+									<template v-if="info.list.pay_status == 4">
+										等待支付
+									</template>
+									<template v-if="info.list.pay_status == 5">
+										<template v-if="info.list.pay_tool == 2">
+											赊账支付成功
+										</template>
+										<template v-if="info.list.pay_tool != 2">
+											支付成功
+										</template>
+									</template>
+									<template v-if="info.list.pay_status == 6">
+										支付失败
+									</template>
+									<template v-if="info.list.pay_status == 7">
+										已退款
+									</template>
+									<template v-if="info.list.pay_status == 8">
+										已部分退款
+									</template>
+									<template v-if="info.list.pay_status == 9">
+										已冻结
+									</template>
+									<template v-if="info.list.pay_status == 10">
+										等待支付
+									</template>
+									<template v-if="info.list.pay_status == 11">
+										等待支付
+									</template>
+									<template v-if="info.list.pay_status == 13">
+										受监管-冻结支付
+									</template>
+									<template v-if="info.list.pay_status == 14">
+										受监管-直接支付
+									</template>
 								</view>
 							</el-col>
 						</el-row>
@@ -124,7 +172,7 @@
 								<view class="order-label">支付工具</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.toTools}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle" :gutter="colGutter">
@@ -132,7 +180,7 @@
 								<view class="order-label">支付方式</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.toPayType}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle" :gutter="colGutter">
@@ -141,54 +189,96 @@
 							</el-col>
 							<el-col>
 								<view class="order-info u-flex">
-									{{info.list.pay_price}}
-									<el-button type="primary" class="u-m-l-30" size="mini" @click="handleShowCouponBox">使用优惠</el-button>
+									{{info.list.coupon_guid}}
+								</view>
+							</el-col>
+						</el-row>
+						<el-row type="flex" align="middle" :gutter="colGutter" v-if="info.list.coupon_guid">
+							<el-col :span="5" class="order-label-col">
+								<view class="order-label">优惠价格</view>
+							</el-col>
+							<el-col>
+								<view class="order-info u-flex">
+									{{info.list.coupon_price}} 元
 								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle" :gutter="colGutter">
 							<el-col :span="5" class="order-label-col">
-								<view class="order-label">支付金额</view>
+								<view class="order-label">实付价格</view>
 							</el-col>
 							<el-col>
 								<view class="order-info u-flex">
-									{{info.list.pay_price}}
-									<el-button type="primary" class="u-m-l-30" size="mini" @click="handlePayOrder">支付订单</el-button>
+									{{info.list.final_price}} 元
 								</view>
 							</el-col>
 						</el-row>
-						<el-row type="flex" align="middle" :gutter="colGutter">
+						<el-row type="flex" align="middle" :gutter="colGutter" v-if="info.list.days">
 							<el-col :span="5" class="order-label-col">
 								<view class="order-label">赊账账期</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.days}}</view>
 							</el-col>
 						</el-row>
-						<el-row type="flex" align="middle" :gutter="colGutter">
+						<!-- <el-row type="flex" align="middle" :gutter="colGutter">
 							<el-col :span="5" class="order-label-col">
 								<view class="order-label">是否签约</view>
 							</el-col>
 							<el-col>
 								<view class="order-info">{{info.list.pay_price}}</view>
 							</el-col>
-						</el-row>
+						</el-row> -->
 						<el-row type="flex" align="middle" :gutter="colGutter">
 							<el-col :span="5" class="order-label-col">
 								<view class="order-label">发货状态</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.toTranState}}</view>
 							</el-col>
 						</el-row>
-						<el-row type="flex" align="middle" :gutter="colGutter">
+						<el-row type="flex" align="middle" :gutter="colGutter" v-if="info.list.tran_id">
 							<el-col :span="5" class="order-label-col">
-								<view class="order-label">收货时间</view>
+								<view class="order-label">运单号</view>
 							</el-col>
 							<el-col>
-								<view class="order-info">{{info.list.pay_price}}</view>
+								<view class="order-info">{{info.list.tran_id}}</view>
 							</el-col>
 						</el-row>
+						<el-row type="flex" align="middle" :gutter="colGutter" v-if="info.list.tran_price" >
+							<el-col :span="5" class="order-label-col">
+								<view class="order-label">运费</view>
+							</el-col>
+							<el-col>
+								<view class="order-info">{{info.list.tran_price}}</view>
+							</el-col>
+						</el-row>
+					</view>
+					<view class="content-btns-wrap u-flex">
+						<view class="item-btns u-p-r-50" v-if="info.button.button1">
+							<el-button type="primary">{{info.button.button1_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button2">
+							<el-button type="danger" @click="handleExitOrderMsg">{{info.button.button2_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button3">
+							<el-button type="primary" @click="handleShowCouponBox">{{info.button.button3_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button4">
+							<el-button type="primary" @click="handlePayOrder">{{info.button.button4_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button6">
+							<el-button type="primary" @click="cancleOrderPrice">{{info.button.button6_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button7">
+							<el-button type="primary">{{info.button.button7_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button8">
+							<el-button type="primary" @click="handleApplyTranSelfMsg">{{info.button.button8_name}}</el-button>
+						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button9">
+							<el-button type="primary" @click="handleConfirmOrderFinal">{{info.button.button9_name}}</el-button>
+						</view>
 					</view>
 					<view class="content-goods-info">
 						<el-table :data="info.list.list_product" border style="width: 100%">
@@ -202,11 +292,15 @@
 									<template slot-scope="scope">
 										<view class="p_info">
 											<view class="p_i_title u-line-2">{{scope.row.p_name}}</view>
-											<view>规格型号：{{scope.row.model}}</view>
+											<view v-if="scope.row.model">规格型号：{{scope.row.model}}</view>
 										</view>
 									</template>
 								</el-table-column>
-								<el-table-column prop="single_price" label="产品单价" width="160" align="right">
+								<el-table-column label="产品单价" width="160" align="right">
+									<template slot-scope="scope">
+										<text class="u-p-r-10">¥</text>
+										{{ scope.row.single_price }}
+									</template>
 								</el-table-column>
 								<el-table-column prop="number" label="产品数量" width="160" align="right">
 								</el-table-column>
@@ -223,15 +317,20 @@
 			</view>
 		</view>
 		<el-dialog class="coupon-table" title="我的优惠券" :visible.sync="couponShow" width="70%">
-		  <el-table height="400" :data="couponList" ref="couponTable" highlight-current-row @current-change="handleCurrentChange">
+		  <el-table height="400" :data="info.coupon" ref="couponTable" highlight-current-row @current-change="handleCurrentChange">
 		    <el-table-column property="id" label="id" width="150"></el-table-column>
 		    <el-table-column property="title" label="优惠劵名称" width="200"></el-table-column>
 		    <el-table-column label="优惠度">
 				<template slot-scope="scope">
-					{{scope.row.coupon}}
+					{{scope.row.coupon}} 元
 				</template>
 			</el-table-column>
-		    <el-table-column label="优惠期">
+		    <el-table-column label="使用门槛" width="200">
+				<template slot-scope="scope">
+					满 {{scope.row.term}} 元
+				</template>
+			</el-table-column>
+		    <el-table-column label="有效期">
 				<template slot-scope="scope">
 					{{scope.row.news_start.split(' ')[0]}}<text class="u-p-l-20 u-p-r-20">~</text>{{scope.row.news_end.split(' ')[0]}}
 				</template>
@@ -282,13 +381,12 @@
 			return {
 				menuActive: '2-1',
 				id: '',
-				timestamp: new Date().getTime(),
 				stepsActive: 3,
 				colGutter: 0,
 				addrData: [{
-				  name: '王小虎',
-				  phone: '18700000000',
-				  address: '浙江省杭州市西湖区莫干山路187易盛大厦12楼'
+				  name: '',
+				  phone: '',
+				  address: ''
 				}],
 				payPwdForm: {
 					pwd: ''
@@ -361,100 +459,33 @@
 					}
 				],
 				info: {
+					address: {
+						list: [],
+					},
 					list: {
-						Order_info: "",
-						address: "",
-						address_id: -1,
-						address_mobile: null,
-						address_name: null,
-						address_re: "[]",
-						buyGetType: "卖家送货",
-						buy_get_type: 0,
-						buy_name: "沈凯婷",
-						c_name: "杭州有意思测试有限公司",
-						cid: 65180,
-						company: {
-							c_ctime: "65180-93027",
-							name: "杭州有意思测试有限公司",
-						},
-						coupon_guid: "",
-						coupon_id: 0,
-						coupon_price: 0,
-						ctime: "2021-12-22 16:59:22",
-						dinli_day: "0000-00-00 00:00:00",
-						final_price: 0,
-						final_time: null,
-						from_type: "new_m",
-						id: 1004127,
-						list_product: [
-							{
-								coupon_price: 0,
-								ctime: "2021-12-22 16:59:22",
-								id: 9820,
-								login: "sktsyh",
-								model: "dasda 300$#@",
-								number: 1,
-								order_id: 1004127,
-								p_name: "涤纶POY半光(50D/36F)涤纶POY半光(50D/36F)涤纶POY半光(50D/36F)涤纶POY半光(50D/36F)涤纶POY半光(50D/36F)涤纶POY半光(50D/36F)涤纶POY半光(50D/36F)",
-								pay_price: 0,
-								pic1: "../../static/img/p1.jpg",
-								pic2: "",
-								pic3: "",
-								pic4: "",
-								pic5: "",
-								pid: 2866,
-								post_ip: "",
-								post_time: "2021-12-22 16:59:22",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 0,
-								state: 0,
-							}
-						],
-						login: "sktsyh",
-						other: "",
-						pay_price: 0,
-						pay_price_piao: 0,
-						pay_status: 0,
-						pay_status_zdy: 9,
-						pay_tool: 1,
-						pay_type: 0,
-						post_ip: "",
-						post_time: "2021-12-22 16:59:22",
-						poster_id: "sktsyh",
-						product_names: "涤纶POY半光(50D/36F)|",
-						product_price: 0,
-						remark: null,
-						self_time: "",
-						sell_login: "ceshi1123",
-						sinopay_id: "",
-						sinopay_pay_pass: 1,
-						state: 0,
-						talk_price: 1,
-						toAgreement: "不签约",
-						toPayState: "等待支付",
-						toPayType: "担保支付",
-						toState: "待议价",
-						toTools: "现金",
-						toTranState: "未发货",
-						tran_day: "0000-00-00 00:00:00",
-						tran_id: "",
-						tran_price: 0,
-						tran_remark: "",
-						tran_start_day: "0000-00-00 00:00:00",
-						tran_state: 0,
-						xcx_status_zzzz: "等待支付",
-						yourself_state: 0,
+						list: {},
+						address_re: {},
+						company: {},
+						list_product: [],
+						title: {}
+					},
+					button: {},
+					coupon: [],
+					sell_cards: {
+						card_wx: {}
 					}
 				}
 			}
 		},
-		onLoad(opt) {
+		async onLoad(opt) {
 			if(opt && opt.id) {
 				this.id = opt.id
+				uni.showLoading({
+					title: '数据加载中'
+				})
+				await this.getData()
 			}
-			this.timestamp = new Date().getTime()
+			
 		},
 		computed: {
 			curTableCoupon() {
@@ -464,6 +495,23 @@
 			}
 		},
 		methods: {
+			async getData() {
+				let res = await this.$http.get('orderDetail.html', {
+					params: {
+						order_id: this.id
+					}
+				})
+				this.$message({
+					type: 'success',
+					message: '获取成功!'
+				});
+				this.addrData = [{
+					  name: res.list.address_name,
+					  phone: res.list.address_mobile,
+					  address: res.list.address
+				}]
+				this.info = res
+			},
 			handlePayOrder() {
 				if(true) {
 					this.$confirm(`有可使用的优惠项，是否放弃优惠直接支付订单?`, '提示', {
@@ -485,21 +533,28 @@
 				});
 				this.handleShowPwdBox()
 			},
-			handleExitOrder() {
+			//取消订单
+			handleExitOrderMsg() {
 				this.$confirm(`是否取消订单?`, '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '在考虑一下',
 					type: 'warning'
-				}).then(() => {
-					
+				}).then(async () => {
+					let res = await this.$http.get('/User/order_cancel', {params: {order_id: this.id}})
+					if(res.code != 1) return
 					this.$message({
 						type: 'success',
-						message: '取消订单!'
+						message: res.msg || '成功'
 					});
+					uni.showLoading({
+						title: '获取最新数据中'
+					})
+					await this.getData()
 				}).catch(() => {
 					       
 				});
-			},
+			},			
+			
 			handleShowCouponBox() {
 				this.couponShow = !this.couponShow
 			},
@@ -507,16 +562,133 @@
 				this.pwdFormDialog = !this.pwdFormDialog
 			},
 			handleCurrentChange(val) {
-				console.log(val)
+				// console.log(val)
 				this.currentRow = val;
 			},
-			handleConfirmCoupon() {
+			//使用优惠券
+			async handleConfirmCoupon() {
+				uni.showLoading({
+					title: '正在处理中'
+				})
+				let res = await this.$http.get('User/check_coupon_product_list', {params: {
+					id: this.currentRow.cid,
+					order_id: this.id
+				}})
+				if(res.code == 2) return false
 				this.$message({
 					type: 'success',
 					message: '优惠券使用成功!'
 				});
 				this.handleShowCouponBox()
-			}
+				uni.showLoading({
+					title: '获取最新数据中'
+				})
+				await this.getData()
+				
+			},
+			
+			//退回订立价
+			handleExitOrderMsg() {
+				this.$confirm(`是否退回订立价?`, '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '再考虑一下',
+					type: 'warning'
+				}).then(async () => {
+					let res = await this.$http.get('/User/roll_back_tran_price', {params: {order_id: this.id}})
+					if(res.code != 1) return
+					this.$message({
+						type: 'success',
+						message: res.msg || '成功'
+					});
+					uni.showLoading({
+						title: '获取最新数据中'
+					})
+					await this.getData()
+				}).catch(() => {
+					       
+				});
+			},
+		
+			//确认订立价
+			handleExitOrderMsg() {
+				this.$confirm(`是否确认订立价?`, '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '再考虑一下',
+					type: 'warning'
+				}).then(async () => {
+					let res = await this.$http.get('/User/check_tran_price', {params: {order_id: this.id}})
+					if(res.code != 1) return
+					this.$message({
+						type: 'success',
+						message: res.msg || '成功'
+					});
+					uni.showLoading({
+						title: '获取最新数据中'
+					})
+					await this.getData()
+				}).catch(() => {
+						   
+				});
+			},			
+			
+			//确认申请提货
+			handleApplyTranSelfMsg() {
+				this.$confirm(`是否确认申请提货?`, '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '再考虑一下',
+					type: 'warning'
+				}).then(async () => {
+					let res = await this.$http.get('/User/apply_tran_self', {params: {order_id: this.id}})
+					if(res.code != 1) return
+					this.$message({
+						type: 'success',
+						message: res.msg || '成功'
+					});
+					uni.showLoading({
+						title: '获取最新数据中'
+					})
+					await this.getData()
+				}).catch(() => {
+						   
+				});
+			},	
+					
+			//确认收货
+			handleConfirmOrderFinal() {
+				this.$confirm(`是否确认收货?`, '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '再考虑一下',
+					type: 'warning'
+				}).then(async () => {
+					if(this.info.list.pay_tool == 9) {
+						
+					}
+					else if(this.info.list.pay_tool == 2) {
+						
+					}
+					else {
+						
+					}
+					
+					
+					
+					
+					
+					
+					let res = await this.$http.get('/User/apply_tran_self', {params: {order_id: this.id}})
+					if(res.code != 1) return
+					this.$message({
+						type: 'success',
+						message: res.msg || '成功'
+					});
+					uni.showLoading({
+						title: '获取最新数据中'
+					})
+					await this.getData()
+				}).catch(() => {
+						   
+				});
+			},
 		}
 	}
 </script>
@@ -612,6 +784,7 @@
 						}
 					}
 				}
+				.content-btns-wrap,
 				.content-addr-info,
 				.content-goods-info  {
 					padding: 15px 30px;

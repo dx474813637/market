@@ -4,6 +4,9 @@ export const mutations = {
 	updatemenuActive(state, index) {
 		state.menuActive = index
 	},
+	updateSinopay(state, info) {
+		state.sinopay = info
+	},
 	updateCartList(state, data) {
 		if(data.action == 'clearAll') {
 			state.cart = [];

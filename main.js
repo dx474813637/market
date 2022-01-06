@@ -2,6 +2,8 @@ import App from './App'
 import element from './element/index'
 import { http } from '@/common/service.js'
 import store from './store'
+import filters from '@/static/js/filters.js'
+Object.keys(filters).forEach(item => Vue.filter(item, filters[item]))
 Vue.use(element)
 import uView from "uview-ui";
 Vue.use(uView);

@@ -13,7 +13,7 @@
 								<view class="top-avatar">
 									<el-image src="../../static/img/p1.jpg"></el-image>
 								</view>
-								<view class="name">Hi, 张三里斯</view>
+								<view class="name">Hi, {{sinopay.name}}</view>
 								<view class="welcome">你好，欢迎登录</view>
 							</view>
 							<view class="item-bottom">
@@ -25,7 +25,7 @@
 							    <view slot="header" class="clearfix">
 									<view class="u-flex u-row-between">
 										<view class="item u-flex">
-											<view class="name">张三里斯 (ID：123456789)</view>
+											<view class="name">{{sinopay.name}} （账号：{{sinopay.bind_info.market_login}}）</view>
 											<navigator url="/pages/bankcard_bind/bankcard_bind">
 												<el-button round class="u-m-l-30" type="primary" plain size="mini">绑卡认证</el-button>
 											</navigator>
@@ -51,15 +51,15 @@
 									<view class="item-left u-flex">
 										<view class="money-view u-flex u-row-around">
 											<view class="m-v-item u-flex">
-												<view class="num">4300.27</view>
+												<view class="num">{{walletInfo.info.bal}}</view>
 												<view class="t">可用余额（元）</view>
 											</view>
 											<view class="m-v-item u-flex">
-												<view class="num">1.48</view>
+												<view class="num">{{walletInfo.info.bal_freeze}}</view>
 												<view class="t">冻结金额（元）</view>
 											</view>
 											<view class="m-v-item u-flex">
-												<view class="num">45612300</view>
+												<view class="num">{{walletInfo.info.bal_refund}}</view>
 												<view class="t">可提金额（元）</view>
 											</view>
 										</view>
@@ -83,23 +83,23 @@
 								<span>业务操作</span>
 							</view>
 							<view class="text item card-m u-flex u-row-between">
-								<navigator url="/pages/bankcard_list/bankcard_list" class="c-m-item u-border u-flex u-row-center">
+								<navigator url="/pages/bankcard/bankcard" class="c-m-item u-border u-flex u-row-center">
 									<view class="icon-wrap">
 										<i class="custom-icon custom-icon-idcard"></i>
 									</view>
-									<view class="c-m-title">绑定银行卡查询(绑卡认证)</view>
+									<view class="c-m-title">绑卡认证 / 绑卡查询 / 转账充值</view>
 								</navigator>
 								<navigator url="/pages/recharge_list/recharge_list" class="c-m-item u-border u-flex u-row-center">
 									<view class="icon-wrap">
 										<i class="custom-icon custom-icon-creditcard"></i>
 									</view>
-									<view class="c-m-title">充提记录</view>
+									<view class="c-m-title">充值 / 提现 / 转账 记录</view>
 								</navigator>
-								<navigator url="/pages/sinopay_account/sinopay_account" class="c-m-item u-border u-flex u-row-center">
+								<navigator url="/pages/sinopay_account/sinopay_account?type=2" class="c-m-item u-border u-flex u-row-center">
 									<view class="icon-wrap">
 										<i class="custom-icon custom-icon-accountbook"></i>
 									</view>
-									<view class="c-m-title">收款账户<text>11000012300</text></view>
+									<view class="c-m-title">收款账户<text>{{sinopay.user_fundaccno_s}}</text></view>
 								</navigator>
 							</view>
 						</el-card>
@@ -157,12 +157,15 @@
 </template>
 
 <script>
-	
+	import {mapState, mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
 				menuActive: '3-1',
-				dialogVisible: false
+				dialogVisible: false,
+				walletInfo: {
+					info: {}
+				}
 			}
 		}, 
 		onLoad() {
@@ -170,12 +173,14 @@
 			this.getData()
 		},
 		computed: {
-			
+			...mapState(['sinopay']),
 		},
 		methods: {
+			...mapMutations(['updateSinopay']),
 			async getData() {
 				let data = await this.$http.get('moneyCenter3.html')
-				console.log(data)
+				this.updateSinopay(data.list);
+				this.walletInfo = data.user_fundaccno_b
 			},
 			handleChangeFlag() {
 				this.dialogVisible = !this.dialogVisible

@@ -27,12 +27,9 @@
 							<el-form-item label="订单状态">
 								<el-select v-model="form.status">
 									<el-option label="全部" value="0"></el-option>
-									<el-option label="等待议价" value="1"></el-option>
-									<el-option label="订单已订立" value="2"></el-option>
-									<el-option label="订单已完成" value="3"></el-option>
-									<el-option label="订单已取消" value="4"></el-option>
-									<el-option label="等待确认" value="5"></el-option>
-									<el-option label="等待确认收货地址" value="6"></el-option>
+									<el-option label="待支付" value="1"></el-option>
+									<el-option label="待交收" value="2"></el-option>
+									<el-option label="已完成" value="3"></el-option>
 								</el-select>
 							</el-form-item>
 							<el-form-item label="日期筛选">
@@ -46,7 +43,7 @@
 						</el-form>
 					</div>
 					<div class="content-table-wrap">
-						<el-table ref="orderTable" :default-expand-all="false" :data="tableData" style="width: 100%" border :header-cell-style="{
+						<el-table v-loading="loading" ref="orderTable" :default-expand-all="false" :data="tableData" style="width: 100%" border :header-cell-style="{
 							background: '#f8f8f8',
 							border: '0',
 							fontWeight: 'normal',
@@ -86,33 +83,40 @@
 							</el-table-column>
 							<el-table-column label="卖家" prop="c_name">
 							</el-table-column>
-							<el-table-column label="下单时间" prop="ctime" width="180px">
+							<el-table-column label="下单时间" prop="ctime" width="180px" align="right">
 								<!-- <template slot-scope="scope">
 									<view>{{scope.row.ctime.split(' ')[0]}}</view>
 									<view>{{scope.row.ctime.split(' ')[1]}}</view>
 								</template> -->
 							</el-table-column>
-							<el-table-column label="订立价" prop="pay_price" width="100px">
+							<el-table-column label="订立价" width="150px" align="right">
+								<template slot-scope="scope">
+									<view class="">{{scope.row.pay_price | toFixed2}} 元</view>
+								</template>
 							</el-table-column>
-							<el-table-column label="订单状态" prop="state" width="90px">
+							<el-table-column label="订单状态" prop="toState" width="120px" align="right">
 							</el-table-column>
-							<el-table-column label="支付类型" prop="pay_tool" width="90px">
+							<el-table-column label="支付类型" prop="toPayType" width="100px" align="right">
+								<template slot-scope="scope">
+									<view>{{scope.row.toTools}}</view>
+									<view>{{scope.row.toPayType}}</view>
+								</template>
 							</el-table-column>
-							<el-table-column label="支付状态" prop="pay_status" width="90px">
-							</el-table-column>
-							<el-table-column label="操作" width="90px">
+							<!-- <el-table-column label="支付状态" prop="toPayState" width="100px">
+							</el-table-column> -->
+							<el-table-column label="操作" width="90px" align="right">
 								<template slot-scope="scope">
 									<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.id}`">
-										<el-button type="text" >订单详情</el-button>
+										<el-button type="text" >{{scope.row.toPayState}}</el-button>
 									</navigator>
 								</template>
 							</el-table-column>
 						</el-table>
 					</div>
 					<div class="content-page-wrap">
-						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-							:current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-							layout="total, sizes, prev, pager, next, jumper" :total="400">
+						<el-pagination @current-change="handleCurrentChange"
+							:current-page="currentPage" :page-size="pageSize"
+							layout="total, prev, pager, next, jumper" :total="resNum">
 						</el-pagination>
 					</div>
 				</view>
@@ -127,6 +131,8 @@
 		data() {
 			return {
 				menuActive: '2-1',
+				pageSize: 10,
+				resNum: 0,
 				form: {
 					orderid: '',
 					wpname: '',
@@ -134,325 +140,67 @@
 					status: '0',
 					date: '',
 				},
-				allListOpen: false,
+				allListOpen: true,
 				currentPage: 1,
-				tableData: [
-					{
-						Order_info: "",
-						address: "浙江省杭州市西湖区莫干山路187易盛大厦12楼",
-						address_id: 514,
-						buyGetType: "卖家送货",
-						buy_get_type: 0,
-						buy_name: "沈凯婷",
-						c_ctime: "65180-93027",
-						c_name: "杭州有意思测试有限公司杭州有意思测试有限公司",
-						cid: 65180,
-						coupon_guid: "",
-						coupon_id: 0,
-						coupon_price: 0,
-						ctime: "2021-12-23 15:30:26",
-						dinli_day: "2021-12-23 15:31:38",
-						final_price: 0,
-						final_time: "2021-12-23 15:32:34",
-						from_type: "wx",
-						id: 1004178,
-						login: "sktsyh",
-						pay_price: 5000,
-						pay_price_piao: 0,
-						pay_status: 5,
-						pay_tool: 2,
-						pay_type: 2,
-						post_ip: "",
-						post_time: "2021-12-23 15:33:34",
-						poster_id: "sktsyh",
-						product_list: [
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 9943,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p1.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							},
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 9944,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p2.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							},
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 222,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p2.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							}
-						],
-						product_names: "分散大红P-4G 200%|",
-						product_price: 5000,
-						remark: null,
-						self_time: "",
-						sell_login: "ceshi1123",
-						sinopay_id: "",
-						state: 2,
-						talk_price: 1,
-						toPayState: "支付成功",
-						toPayType: "货到付款",
-						toState: "订单完成",
-						toTools: "账期（赊账）",
-						toTranState: "已收货",
-						tran_day: "2021-12-23 15:32:34",
-						tran_id: "sf1402442493483",
-						tran_price: 0,
-						tran_remark: "",
-						tran_start_day: "2021-12-23 15:31:52",
-						tran_state: 2,
-						yourself_state: 1,
-					},
-					{
-						Order_info: "",
-						address: "浙江省杭州市西湖区莫干山路187易盛大厦12楼",
-						address_id: 514,
-						buyGetType: "卖家送货",
-						buy_get_type: 0,
-						buy_name: "沈凯婷",
-						c_ctime: "65180-93027",
-						c_name: "杭州有意思测试有限公司",
-						cid: 65180,
-						coupon_guid: "",
-						coupon_id: 0,
-						coupon_price: 0,
-						ctime: "2021-12-23 15:30:26",
-						dinli_day: "2021-12-23 15:31:38",
-						final_price: 0,
-						final_time: "2021-12-23 15:32:34",
-						from_type: "wx",
-						id: 1004179,
-						login: "sktsyh",
-						pay_price: 5000,
-						pay_price_piao: 0,
-						pay_status: 5,
-						pay_tool: 2,
-						pay_type: 2,
-						post_ip: "",
-						post_time: "2021-12-23 15:33:34",
-						poster_id: "sktsyh",
-						product_list: [
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 1,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p1.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							},
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 2,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p2.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							}
-						],
-						product_names: "分散大红P-4G 200%|",
-						product_price: 5000,
-						remark: null,
-						self_time: "",
-						sell_login: "ceshi1123",
-						sinopay_id: "",
-						state: 2,
-						talk_price: 1,
-						toPayState: "支付成功",
-						toPayType: "货到付款",
-						toState: "订单完成",
-						toTools: "账期（赊账）",
-						toTranState: "已收货",
-						tran_day: "2021-12-23 15:32:34",
-						tran_id: "sf1402442493483",
-						tran_price: 0,
-						tran_remark: "",
-						tran_start_day: "2021-12-23 15:31:52",
-						tran_state: 2,
-						yourself_state: 1,
-					},
-					{
-						Order_info: "",
-						address: "浙江省杭州市西湖区莫干山路187易盛大厦12楼",
-						address_id: 514,
-						buyGetType: "卖家送货",
-						buy_get_type: 0,
-						buy_name: "沈凯婷",
-						c_ctime: "65180-93027",
-						c_name: "杭州有意思测试有限公司",
-						cid: 65180,
-						coupon_guid: "",
-						coupon_id: 0,
-						coupon_price: 0,
-						ctime: "2021-12-23 15:30:26",
-						dinli_day: "2021-12-23 15:31:38",
-						final_price: 0,
-						final_time: "2021-12-23 15:32:34",
-						from_type: "wx",
-						id: 1004180,
-						login: "sktsyh",
-						pay_price: 5000,
-						pay_price_piao: 0,
-						pay_status: 5,
-						pay_tool: 2,
-						pay_type: 2,
-						post_ip: "",
-						post_time: "2021-12-23 15:33:34",
-						poster_id: "sktsyh",
-						product_list: [
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 3,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p1.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							},
-							{
-								coupon_price: 0,
-								ctime: "2021-12-23 15:30:26",
-								id: 4,
-								login: "sktsyh",
-								model: "",
-								number: 1,
-								order_id: 1004178,
-								p_name: "分散大红P-4G 200% 分散大红P-4G 200% 分散大红P-4G 200%",
-								pay_price: 5000,
-								pic1: "../../static/img/p2.jpg",
-								pid: 15,
-								post_ip: "",
-								post_time: "2021-12-23 15:31:38",
-								poster_id: "sktsyh",
-								remark: "",
-								sell_login: "ceshi1123",
-								single_price: 5000,
-								state: 1,
-							}
-						],
-						product_names: "分散大红P-4G 200%|",
-						product_price: 5000,
-						remark: null,
-						self_time: "",
-						sell_login: "ceshi1123",
-						sinopay_id: "",
-						state: 2,
-						talk_price: 1,
-						toPayState: "支付成功",
-						toPayType: "货到付款",
-						toState: "订单完成",
-						toTools: "账期（赊账）",
-						toTranState: "已收货",
-						tran_day: "2021-12-23 15:32:34",
-						tran_id: "sf1402442493483",
-						tran_price: 0,
-						tran_remark: "",
-						tran_start_day: "2021-12-23 15:31:52",
-						tran_state: 2,
-						yourself_state: 1,
-					}
-				]
-
+				type: '0',
+				tableData: [],
+				loading: false
 			}
 		},
-		onLoad() {
-
+		async onLoad(opt) {
+			if(opt && opt.hasOwnProperty('type')) {
+				this.type = opt.type;
+				this.form.status = opt.form.status
+			}
+			await this.getData()
+			
+		},
+		computed: {
+			params() {
+				let obj = {
+					type: this.type,
+					p: this.currentPage
+				}
+				return obj
+			}
 		},
 		methods: {
-			handleAllList() {
-				this.allListOpen = !this.allListOpen
+			async getData() {
+				this.loading = true;
+				let data = await this.$http.get('order.html', {
+					params: this.params
+				})
+				this.tableData = data.list.list_order;
+				this.resNum = data.list.pw_rec_total;
+				this.pageSize = data.list.page_record;
+				this.currentPage = data.list.pw_curr_page;
+				this.loading = false;
+				this.$nextTick(() => {
+					this.handleAllList(this.allListOpen)
+				})
+			},
+			handleAllList(flag) {
+				let f 
+				if((flag === true || flag === false)) {
+					f = flag
+				}else {
+					this.allListOpen = !this.allListOpen
+					f = this.allListOpen
+				}
+				
 				this.tableData.forEach(row => {
-					this.$refs.orderTable.toggleRowExpansion(row, this.allListOpen)
+					this.$refs.orderTable.toggleRowExpansion(row, f)
 				})
 				
 			},
-			onSubmit() {
-				console.log('submit!');
+			async onSubmit() {
+				this.currentPage = 1;
+				this.type = this.form.status
+				await this.getData()
 			},
-			handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
+			async handleCurrentChange(val) {
+				this.currentPage = val
+				await this.getData()
 			}
 		}
 	}
@@ -540,6 +288,9 @@
 
 				.content-table-wrap {
 					padding: 0 30px 10px;
+					.el-table {
+						min-height: 50vh;
+					}
 					.all-open {
 						font-size: 16px;
 						cursor: pointer;

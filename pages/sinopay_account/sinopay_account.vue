@@ -9,9 +9,9 @@
 				<view class="wrap-item content">
 					<view class="content-header u-flex u-row-between u-border-bottom">
 						<view class="c-h-item u-flex">
-							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
+							<!-- <navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
-							</navigator>
+							</navigator> -->
 							<view class="header-title">{{title}}</view>
 						</view>
 					</view>
@@ -29,7 +29,7 @@
 								<view class="sinopay-label">{{title}}</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">{{info.info.user_fundaccno}} - 正常</view>
+								<view class="sinopay-info">{{info.info.user_fundaccno}} - {{info.info.state | sinopayAccStatus}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -46,7 +46,7 @@
 							</el-col>
 							<el-col>
 								<view class="sinopay-info u-flex">
-									<view>{{info.info.bal_freeze}}</view>
+									<view>{{info.info.bal}}</view>
 									<!-- <navigator url="/pages/recharge/recharge" class="u-m-l-40">
 										<el-button type="primary" size="mini">提现</el-button>
 									</navigator> -->
@@ -62,7 +62,7 @@
 								<view class="sinopay-label">可提余额</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">1.17</view>
+								<view class="sinopay-info">{{info.info.bal_refund}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -130,7 +130,7 @@
 						
 					</view>
 					
-					<view class="content-sinopay">
+					<!-- <view class="content-sinopay">
 						<view class="u-flex u-row-between ahref">
 							<view class="u-flex">
 								<navigator url="/pages/bankcard_list/bankcard_list">绑定提现银行账户列表</navigator>
@@ -160,7 +160,7 @@
 								</template>
 							</el-table-column>
 						</el-table>
-					</view>
+					</view> -->
 				</view>
 			</view>
 		</view>
@@ -188,11 +188,17 @@
 				}
 			}
 		}, 
-		onLoad(opt) {
+		async onLoad(opt) {
 			if(opt && opt.type) {
 				this.type = opt.type;
 			}
-			this.getData()
+			uni.showLoading({
+				title: '账户数据加载中'
+			})
+			await this.getData()
+			uni.showToast({
+				title: '数据加载完成'
+			})
 		},
 		computed: {
 			title() {

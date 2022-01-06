@@ -104,9 +104,9 @@ export default [
 			{
 				label: '我的现金账户',
 				type: 'link-navigator',
-				url: '/pages/sinopay_account_list/sinopay_account_list',
+				url: '/pages/sinopay_account/sinopay_account',
 				icon: '',
-				active: 'sinopay_account_list',
+				active: 'sinopay_account',
 				index: '3-3',
 			},
 			{

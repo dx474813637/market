@@ -7,7 +7,7 @@
 					<d-menu :active="menuActive"></d-menu>
 				</view>
 				<view class="wrap-item content">
-					<view class="content-header u-flex u-row-between u-border-bottom">
+					<view class="content-header u-flex u-row-between u-border-bottom u-m-b-20">
 						<view class="c-h-item u-flex">
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
@@ -15,7 +15,7 @@
 							<view class="header-title">订单详情</view>
 						</view>
 					</view>
-					<view class="content-steps-wrap">
+					<!-- <view class="content-steps-wrap">
 						<el-steps :active="stepsActive" process-status="process" finish-status="success" align-center>
 							<el-step icon="el-icon-sold-out">
 								<view class="step-title" slot="title">
@@ -47,8 +47,8 @@
 								</view>
 							</el-step>
 						</el-steps>
-					</view>
-					<view class="content-addr-info">
+					</view> -->
+					<view class="content-addr-info" v-if="info.list.address_id !== 0">
 						<el-table :data="addrData" style="width: 100%">
 							<el-table-column :label="`收货信息 - ${info.list.buyGetType}`">
 								<el-table-column prop="name" label="收货人" width="200" v-if="info.list.address_name">
@@ -189,7 +189,7 @@
 							</el-col>
 							<el-col>
 								<view class="order-info u-flex">
-									{{info.list.coupon_guid}}
+									{{info.list.coupon_guid || '无'}}
 								</view>
 							</el-col>
 						</el-row>
@@ -256,7 +256,7 @@
 					</view>
 					<view class="content-btns-wrap u-flex">
 						<view class="item-btns u-p-r-50" v-if="info.button.button1">
-							<el-button type="primary">{{info.button.button1_name}}</el-button>
+							<a href="http://my.i.msg.toocle.com/?_a=msg&f=detail&name=ceshi1123" target="_blank"><el-button type="primary" >{{info.button.button1_name}}</el-button></a>
 						</view>
 						<view class="item-btns u-p-r-50" v-if="info.button.button2">
 							<el-button type="danger" @click="handleExitOrderMsg">{{info.button.button2_name}}</el-button>
@@ -267,11 +267,14 @@
 						<view class="item-btns u-p-r-50" v-if="info.button.button4">
 							<el-button type="primary" @click="handlePayOrder">{{info.button.button4_name}}</el-button>
 						</view>
+						<view class="item-btns u-p-r-50" v-if="info.button.button5">
+							<el-button type="primary" @click="handleShowAddrBox">{{info.button.button5_name}}</el-button>
+						</view>
 						<view class="item-btns u-p-r-50" v-if="info.button.button6">
-							<el-button type="primary" @click="cancleOrderPrice">{{info.button.button6_name}}</el-button>
+							<el-button type="primary" @click="handleExitPayPriceMsg">{{info.button.button6_name}}</el-button>
 						</view>
 						<view class="item-btns u-p-r-50" v-if="info.button.button7">
-							<el-button type="primary">{{info.button.button7_name}}</el-button>
+							<el-button type="primary" @click="handleConfirmPayPriceMsg">{{info.button.button7_name}}</el-button>
 						</view>
 						<view class="item-btns u-p-r-50" v-if="info.button.button8">
 							<el-button type="primary" @click="handleApplyTranSelfMsg">{{info.button.button8_name}}</el-button>
@@ -316,6 +319,33 @@
 				</view>
 			</view>
 		</view>
+		
+		<el-dialog class="coupon-table" title="我的地址列表" :visible.sync="addrTableShow" width="70%">
+		  <el-table height="400" :data="info.address.list" ref="addrTable" highlight-current-row @current-change="handleCurrentAddr" v-if="info.address">
+		    <el-table-column property="id" label="id" width="50"></el-table-column>
+			<el-table-column label="收货人" width="150">
+		    	<template slot-scope="scope">
+		    		<i class="el-icon-check u-m-r-10 d-danger-color" v-if="currentRow_addr.id == scope.row.id"></i>
+		    		{{scope.row.name}}
+		    		<view class="default-label u-m-l-10" v-if="scope.row.auto">默认</view>
+		    	</template>
+		    </el-table-column>
+		    <el-table-column property="mobile" label="手机号" width="200"></el-table-column>
+		    <el-table-column label="详细地址">
+		    	<template slot-scope="scope">
+		    		{{scope.row.regional_name}}{{scope.row.address}}
+		    	</template>
+		    </el-table-column>
+		    <view slot="empty" class="empty-wrap">当前无收货地址</view>
+		  </el-table>
+		   <span slot="footer" class="dialog-footer u-flex u-col-top">
+			  <span class="footer-sub d-theme-color u-p-r-60" style="font-size: 14px;">{{curTableAddr}}</span>
+		      <el-button @click="addrTableShow = false">取 消</el-button>
+		      <el-button type="primary" @click="handleConfirmAddr">确 定</el-button>
+		    </span>
+		</el-dialog>
+		
+		
 		<el-dialog class="coupon-table" title="我的优惠券" :visible.sync="couponShow" width="70%">
 		  <el-table height="400" :data="info.coupon" ref="couponTable" highlight-current-row @current-change="handleCurrentChange">
 		    <el-table-column property="id" label="id" width="150"></el-table-column>
@@ -343,6 +373,8 @@
 		      <el-button type="primary" @click="handleConfirmCoupon">确 定</el-button>
 		    </span>
 		</el-dialog>
+		
+		
 		<el-dialog title="支付密码验证" :visible.sync="pwdFormDialog" width="40%" destroyOnClose>
 		  <el-form :model="payPwdForm" label-width="80px">
 		    <el-form-item label="密码"  required>
@@ -353,6 +385,10 @@
 			<el-button type="primary" @click="handleConfirmPayOrder">确定</el-button>
 		  </view>
 		</el-dialog>
+		
+		
+		
+		
 		<el-dialog title="短信验证" :visible.sync="codeFormDialog" width="40%" destroyOnClose>
 		  <el-form :model="codeForm" label-width="80px">
 		    <el-form-item label="验证码"  required>
@@ -364,14 +400,14 @@
 						 <el-button style="width: 100%;" type="primary" plain>获取验证码</el-button>
 					</el-col>
 				</el-row>
-		      
-			 
 		    </el-form-item>
 		  </el-form>
 		  <view slot="footer" class="dialog-footer">
 			<el-button type="primary" @click="codeFormDialog = false">确定</el-button>
 		  </view>
 		</el-dialog>
+		
+		
 	</view>
 </template>
 
@@ -381,7 +417,7 @@
 			return {
 				menuActive: '2-1',
 				id: '',
-				stepsActive: 3,
+				// stepsActive: 3,
 				colGutter: 0,
 				addrData: [{
 				  name: '',
@@ -395,69 +431,12 @@
 					code: ''
 				},
 				couponShow: false,
+				addrTableShow: false,
 				pwdFormDialog: false,
 				codeFormDialog: false,
-				currentRow: null,
-				couponList: [
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 2,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 100000000000,
-						title: "双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					}
-				],
+				currentRow: {},
+				currentRow_addr: {},
+				couponList: [],
 				info: {
 					address: {
 						list: [],
@@ -485,25 +464,30 @@
 				})
 				await this.getData()
 			}
-			
+			 
 		},
 		computed: {
 			curTableCoupon() {
-				if(!this.currentRow) return '当前无选择'
+				if(!this.currentRow.id) return '当前无选择'
 				let coupon = this.currentRow
 				return `当前勾选【id：${coupon.id}】【${coupon.title}】优惠券。点击【确认】优惠即可生效，此行为不可撤销`
+			},
+			curTableAddr() {
+				if(!this.currentRow_addr.id) return '当前无选择'
+				let addr = this.currentRow_addr
+				return `当前勾选【id：${addr.id}】为收货地址。点击【确认】即可生效，此行为不可撤销`
 			}
 		},
 		methods: {
 			async getData() {
-				let res = await this.$http.get('orderDetail.html', {
+				let res = await this.$http.get('orderDetail', {
 					params: {
 						order_id: this.id
 					}
 				})
 				this.$message({
 					type: 'success',
-					message: '获取成功!'
+					message: '数据加载完成!'
 				});
 				this.addrData = [{
 					  name: res.list.address_name,
@@ -537,7 +521,7 @@
 			handleExitOrderMsg() {
 				this.$confirm(`是否取消订单?`, '提示', {
 					confirmButtonText: '确定',
-					cancelButtonText: '在考虑一下',
+					cancelButtonText: '再考虑一下',
 					type: 'warning'
 				}).then(async () => {
 					let res = await this.$http.get('/User/order_cancel', {params: {order_id: this.id}})
@@ -554,9 +538,12 @@
 					       
 				});
 			},			
-			
+
 			handleShowCouponBox() {
 				this.couponShow = !this.couponShow
+			},
+			handleShowAddrBox() {
+				this.addrTableShow = !this.addrTableShow
 			},
 			handleShowPwdBox() {
 				this.pwdFormDialog = !this.pwdFormDialog
@@ -587,8 +574,32 @@
 				
 			},
 			
+			//选择收货地址
+			handleCurrentAddr(val) {
+				this.currentRow_addr = val;
+			},
+			async handleConfirmAddr(val) {
+				uni.showLoading({
+					title: '正在处理中'
+				})
+				let res = await this.$http.get('User/set_buy_get_type', {params: {
+					buy_address_id: this.currentRow_addr.id,
+					order_id: this.id
+				}})
+				if(res.code == 2) return false
+				this.$message({
+					type: 'success',
+					message: '提交收货地址成功!'
+				});
+				this.handleShowAddrBox()
+				uni.showLoading({
+					title: '获取最新数据中'
+				})
+				await this.getData()
+				
+			},
 			//退回订立价
-			handleExitOrderMsg() {
+			handleExitPayPriceMsg() {
 				this.$confirm(`是否退回订立价?`, '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '再考虑一下',
@@ -610,7 +621,7 @@
 			},
 		
 			//确认订立价
-			handleExitOrderMsg() {
+			handleConfirmPayPriceMsg() {
 				this.$confirm(`是否确认订立价?`, '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '再考虑一下',
@@ -694,6 +705,16 @@
 </script>
 
 <style scoped lang="scss">
+	.default-label {
+		font-size: 12px;
+		color: #fff;
+		background-color: $u-error;
+		padding: 2px 8px;
+		border-radius: 3px;
+		display: inline-block;
+		line-height: 16px;
+	
+	}
 	.coupon-table {
 		/deep/ .el-dialog__footer {
 			display: flex;

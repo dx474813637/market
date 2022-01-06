@@ -81,8 +81,8 @@
 					<el-input v-model="addrForm.mobile"></el-input>
 				</el-form-item>
 				<el-form-item label="所在地区" prop="regional_name">
-					<el-cascader v-model="addrForm.regional_name" :options="options" @change="handleChange">
-					</el-cascader>
+					<el-input v-model="addrForm.regional_name"></el-input>
+					<!-- <el-cascader v-model="addrForm.regional_name" :options="options" @change="handleChange"></el-cascader> -->
 				</el-form-item>
 				<el-form-item label="详细地址" prop="address">
 					<el-input type="textarea" v-model="addrForm.address"></el-input>
@@ -158,77 +158,18 @@
 						trigger: ['blur', 'change']
 					}],
 				},
-				dataList: [{
-						address: "莫干山路187易盛大厦12楼",
-						auto: 1,
-						ctime: "2021-11-22 09:22:24",
-						id: 5124,
-						login: "sktsyh",
-						mobile: 135882221234,
-						name: "张三",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11330106,
-						regional_name: "浙江省杭州市西湖区",
-						remark: "",
-						tags: "",
-					},
-					{
-						address: "扣图路柯南秀露琪亚动漫展扣图路柯南秀露琪亚动漫展扣图路柯南秀露琪亚动漫展",
-						auto: 0,
-						ctime: "2021-11-19 09:15:35",
-						id: 508,
-						login: "sktsyh",
-						mobile: 12345678984,
-						name: "sky",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11130102,
-						regional_name: "河北省石家庄市长安区",
-						remark: "",
-						tags: "",
-					},
-					{
-						address: "扣图路柯南秀露琪亚动漫展",
-						auto: 0,
-						ctime: "2021-11-19 09:15:35",
-						id: 108,
-						login: "sktsyh",
-						mobile: 12345678984,
-						name: "sky",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11130102,
-						regional_name: "河北省石家庄市长安区",
-						remark: "",
-						tags: "",
-					},
-					{
-						address: "扣图路柯南秀露琪亚动漫展",
-						auto: 0,
-						ctime: "2021-11-19 09:15:35",
-						id: 308,
-						login: "sktsyh",
-						mobile: 12345678984,
-						name: "sky",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11130102,
-						regional_name: "河北省石家庄市长安区",
-						remark: "",
-						tags: "",
-					}
-				]
+				dataList: []
 			}
 		},
 		onLoad() {
-
+			this.getData()
 		},
 		methods: {
+			async getData() {
+				let res = await this.$http.get('address')
+				if(res.code != 1) return;
+				this.dataList = res.list.list
+			},
 			handleChangeDialogShow(formName) {
 				this.dialogFormVisible = !this.dialogFormVisible
 				if (!this.dialogFormVisible) {
@@ -241,7 +182,7 @@
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						alert('submit!');
+						this.$http.get('User/address_change', {params: this.addrForm})
 						this.handleChangeDialogShow(formName)
 					} else {
 						console.log('error submit!!');
@@ -262,12 +203,20 @@
 				this.handleChangeDialogShow('ruleForm')
 			},
 			deletAddr(data) {
-				this.$notify({
-					title: '消息提示',
-					message: '删除成功',
-					position: 'bottom-right',
-					type: 'success'
-				});
+				this.dataList = this.dataList.filter(ele => ele.id !== data.id)
+					// let res = await this.$http.get('User/roll_back_tran_price', {params: {order_id: this.id}})
+					// if(res.code != 1) return
+					// this.$message({
+					// 	type: 'success',
+					// 	message: res.msg || '成功'
+					// });
+					
+				// this.$notify({
+				// 	title: '消息提示',
+				// 	message: '删除成功',
+				// 	position: 'bottom-right',
+				// 	type: 'success'
+				// });
 			}
 		}
 	}

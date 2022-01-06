@@ -61,7 +61,7 @@
 								</template>
 								<template slot-scope="props">
 									<view class="expand-box u-m-l-14 u-p-l-80 u-p-r-20 u-p-b-40 u-flex u-flex-wrap">
-										<el-row type="flex" align="top"  class="table-row-prodList" v-for="item in props.row.product_list" :key="item.id">
+										<el-row type="flex" align="middle"  class="table-row-prodList" v-for="item in props.row.product_list" :key="item.id">
 											<el-col :span="4" class="img-w u-flex u-row-center">
 												<el-image class="prod-img" fit="cover" :src="item.pic1"></el-image>
 											</el-col>
@@ -104,7 +104,7 @@
 							</el-table-column>
 							<!-- <el-table-column label="支付状态" prop="toPayState" width="100px">
 							</el-table-column> -->
-							<el-table-column label="操作" width="90px" align="right">
+							<el-table-column label="操作" width="120px" align="right">
 								<template slot-scope="scope">
 									<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.id}`">
 										<el-button type="text" >{{scope.row.toPayState}}</el-button>
@@ -167,7 +167,7 @@
 		methods: {
 			async getData() {
 				this.loading = true;
-				let data = await this.$http.get('order.html', {
+				let data = await this.$http.get('order', {
 					params: this.params
 				})
 				this.tableData = data.list.list_order;

@@ -29,14 +29,14 @@ export default [
 				active: 'safe',
 				index: '1-3',
 			},
-			{
-				label: '登录明细',
-				type: 'link-navigator',
-				url: '/pages/log/log',
-				icon: '',
-				active: 'log',
-				index: '1-4',
-			},
+			// {
+			// 	label: '登录明细',
+			// 	type: 'link-navigator',
+			// 	url: '/pages/log/log',
+			// 	icon: '',
+			// 	active: 'log',
+			// 	index: '1-4',
+			// },
 		]
 	},
 	{

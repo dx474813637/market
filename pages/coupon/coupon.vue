@@ -15,21 +15,21 @@
 							<el-link type="primary">领取更多优惠劵</el-link>
 						</view>
 					</view>
-					<view class="content-btn-wrap">
+					<!-- <view class="content-btn-wrap">
 						<u-subsection activeColor="#ed5656" fontSize="14" :list="btnlist" mode="button" :current="btnIndex" @change="handlechangeBtnsIndex"></u-subsection>
-					</view>
+					</view> -->
 					
 					<view class="content-list-wrap u-flex u-flex-wrap">
 						<view class="list-item" v-for="item in dataList" :key="item.id">
 							<d-coupon-card :list="item"></d-coupon-card>
 						</view>
 					</view>
-					<div class="content-page-wrap">
+					<!-- <div class="content-page-wrap">
 						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
 							:current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100"
 							layout="total, sizes, prev, pager, next, jumper" :total="400">
 						</el-pagination>
-					</div>
+					</div> -->
 				</view>
 			</view>
 
@@ -46,217 +46,19 @@
 				btnIndex: 0,
 				currentPage: 1,
 				btnlist: ['全部', '未使用', '已使用', '已过期'],
-				dataList: [
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动双十一活动双十一活动双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动双十一活动双十一活动双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动双十一活动双十一活动双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动双十一活动双十一活动双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动双十一活动双十一活动双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-					{
-						api: 10000,
-						cate: 1,
-						cdate: "2021-11-17 10:23:46",
-						cid: 78,
-						commission: 0,
-						coupon: 0.1,
-						date: "2021-11-17",
-						description: "",
-						dtime: "2021-11-17 10:23:46",
-						end: 1643587200,
-						guid: "0C2B5D05-0E6E-8609-CBBB-6D955CC9BDF2",
-						id: 238,
-						img: "",
-						intro: "",
-						login: "sktsyh",
-						news_api: 10000,
-						news_end: "2022-01-31 08:00:00",
-						news_id: 78,
-						news_login: "ceshi1123",
-						news_start: "2021-11-17 08:00:00",
-						news_state: 0,
-						number: 100,
-						start: 1637107200,
-						state: 0,
-						term: 1,
-						title: "双十一活动双十一活动双十一活动双十一活动",
-						uptime: "2021-11-18 14:05:31",
-					},
-				]
+				dataList: []
 			}
 		},
-		onLoad() {
-
+		async onLoad() {
+			uni.showLoading()
+			this.getData()
 		},
 		methods: {
+			async getData() {
+				let res = await this.$http.get('User/coupon')
+				if(res.code != 1) return;
+				this.dataList = res.list.list
+			},
 			handlechangeBtnsIndex(index) {
 				this.btnIndex = index
 			},

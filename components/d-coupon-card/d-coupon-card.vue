@@ -2,8 +2,15 @@
 	<view class="coupon-wrapper">
 		<view class="coupon-header u-flex">
 			<view class="c-h-item u-flex u-col-bottom" v-if="list.cate == 1">
-				<view class="u-p-b-10 u-p-r-10">¥</view>
-				<view class="price-num">{{list.coupon}}</view>
+				<template v-if="list.cate == 2">
+					<view class="price-num u-p-r-10">{{list.coupon}}</view>
+					<view class="u-p-b-10">折</view>
+				</template>
+				<template v-else>
+					<view class="u-p-b-10 u-p-r-10">¥</view>
+					<view class="price-num">{{list.coupon}}</view>
+				</template>
+				
 			</view>
 			<view class="c-h-item">
 				<view class="coupon-mk">满{{list.term}}元可用</view>
@@ -18,16 +25,20 @@
 			<el-row class="title-row">
 				<el-col class="u-line-2">
 					<text class="coupon-label">
-						<template v-if="list.cate == 1">
+						<template v-if="list.cate == 2">
+							折扣券
+						</template>
+						<template v-else>
 							满减券
 						</template>
 					</text>
 					<text :title="list.title">{{list.title}}</text>
 				</el-col>
 			</el-row>
-			<el-row class="u-m-t-30">
-				<el-col class="u-flex u-row-center">
-					<el-link type="danger" class="use-link">参加活动商品<i class="el-icon-question el-icon--right"></i></el-link>
+			<el-row class="u-m-t-10">
+				<el-col class="u-flex u-font-24 u-line-2">
+					【GUID】{{list.guid}}
+					<!-- <el-link type="danger" class="use-link">参加活动商品<i class="el-icon-question el-icon--right"></i></el-link> -->
 				</el-col>
 			</el-row>
 		</view>
@@ -85,7 +96,8 @@
 			}
 		}
 		.coupon-content {
-			padding: 15px 20px;
+			padding: 15px 15px;
+			height: 80px;
 			background-color: #ffe2e2;
 			color: #ef6d6d;
 			font-size: 14px;

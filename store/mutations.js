@@ -7,6 +7,9 @@ export const mutations = {
 	updateSinopay(state, info) {
 		state.sinopay = info
 	},
+	updateReginalData(state, info) {
+		state.reginal_list = info
+	},
 	updateCartList(state, data) {
 		if(data.action == 'clearAll') {
 			state.cart = [];

@@ -9,11 +9,14 @@
 				<view class="wrap-item content">
 					<view class="content-header u-flex u-row-between u-border-bottom">
 						<view class="c-h-item u-flex">
-							<view class="header-title">订单管理</view>
+							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
+								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
+							</navigator>
+							<view class="header-title">赊账管理</view>
 						</view>
 						<view class="c-h-item u-flex">
-							<navigator url="/pages/credit/credit">
-								<el-button type="text">赊账管理</el-button>
+							<navigator url="/pages/orderList/orderList">
+								<el-button type="text">现金订单列表</el-button>
 							</navigator>
 						</view>
 					</view>
@@ -21,12 +24,18 @@
 						<el-form :inline="true" :model="form" class="demo-form-inline" size="medium"
 							label-width="4.5rem" label-position="left">
 							
-							<el-form-item label="订单状态">
-								<el-select v-model="form.status">
-									<el-option label="全部" value="0"></el-option>
-									<el-option label="待支付" value="1"></el-option>
-									<el-option label="待交收" value="2"></el-option>
-									<el-option label="已完成" value="3"></el-option>
+							<el-form-item label="支付状态">
+								<el-select v-model="form.pay_status">
+									<el-option label="全部" value="99"></el-option>
+									<el-option label="未还款" value="0"></el-option>
+									<el-option label="已还款" value="5"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="逾期状态">
+								<el-select v-model="form.over_status">
+									<el-option label="全部" value="99"></el-option>
+									<el-option label="未逾期" value="0"></el-option>
+									<el-option label="已逾期" value="1"></el-option>
 								</el-select>
 							</el-form-item>
 							<el-form-item>
@@ -35,72 +44,42 @@
 						</el-form>
 					</div>
 					<div class="content-table-wrap">
-						<el-table v-loading="loading" ref="orderTable" :default-expand-all="false" :data="tableData" style="width: 100%" border :header-cell-style="{
+						<el-table v-loading="loading" ref="creditTable"  :data="tableData" style="width: 100%" border :header-cell-style="{
 							background: '#f8f8f8',
 							border: '0',
 							fontWeight: 'normal',
 							color: '#777'
 						}">
-							<el-table-column type="expand">
-								 <template slot="header" slot-scope="scope">
-									 <view class="all-open" @click="handleAllList" title="展开所有订单清单">
-										<i :class="{
-											'el-icon-document-remove': allListOpen,
-											'el-icon-document-add': !allListOpen
-										}"></i>
-									 </view>
-									 
+							<el-table-column label="id" prop="id" width="65px"></el-table-column>
+							<el-table-column label="卖家" prop="c_name"></el-table-column>
+							<el-table-column label="赊账金额" width="130px" align="right">
+								<template slot-scope="scope">
+									<view class="">{{scope.row.final_price | toFixed2}} 元</view>
 								</template>
-								<template slot-scope="props">
-									<view class="expand-box u-m-l-14 u-p-l-80 u-p-r-20 u-p-b-40 u-flex u-flex-wrap">
-										<el-row type="flex" align="middle"  class="table-row-prodList" v-for="item in props.row.product_list" :key="item.id">
-											<el-col :span="4" class="img-w u-flex u-row-center">
-												<el-image class="prod-img" fit="cover" :src="item.pic1"></el-image>
-											</el-col>
-											<el-col :span="12">
-												<view class="prod-title u-line-2">{{item.p_name}}</view>
-											</el-col>
-											<el-col :span="5">
-												<view class="prod-price">¥ {{item.single_price}}</view>
-											</el-col>
-											<el-col :span="3">
-												<view class="prod-num">× {{item.number}}</view>
-											</el-col>
-										</el-row>
+							</el-table-column>
+							<el-table-column label="创建时间" prop="ctime" align="right" width="180px"></el-table-column>
+							<el-table-column label="赊账到期日" width="110px" prop="end_day" align="right"></el-table-column>
+							<el-table-column label="支付状态" width="90px" align="right">
+									<template slot-scope="scope">
+										<view class="">{{scope.row.pay_status_name}}</view>
+									</template>
+							</el-table-column>
+							<el-table-column label="逾期状态" width="90px" align="right">
+									<template slot-scope="scope">
+										<view class="">{{scope.row.over_status_name}}</view>
+									</template>
+							</el-table-column>
+							<el-table-column label="操作" width="145px" align="right">
+								<template slot-scope="scope">
+									<view class="u-flex u-row-right">
+										<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.order_id}`">
+											<el-button type="text" >订单详情</el-button>
+										</navigator>
+										<navigator class="u-m-l-10" :url="`/pages/creditDetail/creditDetail?id=${scope.row.id}`">
+											<el-button type="text" >赊账详情</el-button>
+										</navigator>
 									</view>
 									
-								</template>
-							</el-table-column>
-							<el-table-column label="订单号" prop="id" width="90px">
-							</el-table-column>
-							<el-table-column label="卖家" prop="c_name">
-							</el-table-column>
-							<el-table-column label="下单时间" prop="ctime" width="180px" align="right">
-								<!-- <template slot-scope="scope">
-									<view>{{scope.row.ctime.split(' ')[0]}}</view>
-									<view>{{scope.row.ctime.split(' ')[1]}}</view>
-								</template> -->
-							</el-table-column>
-							<el-table-column label="订立价" width="150px" align="right">
-								<template slot-scope="scope">
-									<view class="">{{scope.row.pay_price | toFixed2}} 元</view>
-								</template>
-							</el-table-column>
-							<el-table-column label="订单状态" prop="toState" width="120px" align="right">
-							</el-table-column>
-							<el-table-column label="支付类型" prop="toPayType" width="100px" align="right">
-								<template slot-scope="scope">
-									<view>{{scope.row.toTools}}</view>
-									<view>{{scope.row.toPayType}}</view>
-								</template>
-							</el-table-column>
-							<!-- <el-table-column label="支付状态" prop="toPayState" width="100px">
-							</el-table-column> -->
-							<el-table-column label="操作" width="120px" align="right">
-								<template slot-scope="scope">
-									<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.id}`">
-										<el-button type="text" >{{scope.row.toPayState}}</el-button>
-									</navigator>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -123,31 +102,34 @@
 		data() {
 			return {
 				menuActive: '2-1',
-				pageSize: 10,
+				pageSize: 15,
 				resNum: 0,
 				form: {
-					status: '0',
+					pay_status: '99',
+					over_status: '99',
 				},
+				type: {
+					pay_status: '99',
+					over_status: '99',
+				},
+				
 				allListOpen: true,
 				currentPage: 1,
-				type: '0',
 				tableData: [],
 				loading: false
 			}
 		},
 		async onLoad(opt) {
-			if(opt && opt.hasOwnProperty('type')) {
-				this.type = opt.type;
-				this.form.status = opt.form.status
-			}
 			await this.getData()
 			
 		},
 		computed: {
 			params() {
 				let obj = {
-					type: this.type,
-					p: this.currentPage
+					pay_status: this.type.pay_status,
+					over_status: this.type.over_status,
+					p: this.currentPage,
+					
 				}
 				return obj
 			}
@@ -155,39 +137,23 @@
 		methods: {
 			async getData() {
 				this.loading = true;
-				let data = await this.$http.get('order', {
+				let data = await this.$http.get('credit', {
 					params: this.params
 				})
-				this.tableData = data.list.list_order;
+				this.tableData = data.list.list;
 				this.resNum = data.list.pw_rec_total;
 				this.pageSize = data.list.page_record;
 				this.currentPage = data.list.pw_curr_page;
 				this.loading = false;
-				this.$nextTick(() => {
-					this.handleAllList(this.allListOpen)
-				})
-			},
-			handleAllList(flag) {
-				let f 
-				if((flag === true || flag === false)) {
-					f = flag
-				}else {
-					this.allListOpen = !this.allListOpen
-					f = this.allListOpen
-				}
-				
-				this.tableData.forEach(row => {
-					this.$refs.orderTable.toggleRowExpansion(row, f)
-				})
-				
 			},
 			async onSubmit() {
 				this.currentPage = 1;
-				this.type = this.form.status
+				this.type = this.form
 				await this.getData()
 			},
 			async handleCurrentChange(val) {
 				this.currentPage = val
+				this.form = this.type
 				await this.getData()
 			}
 		}

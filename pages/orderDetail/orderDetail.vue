@@ -375,35 +375,59 @@
 		</el-dialog>
 		
 		
-		<el-dialog title="支付密码验证" :visible.sync="pwdFormDialog" width="40%" destroyOnClose>
-		  <el-form :model="payPwdForm" label-width="80px">
-		    <el-form-item label="密码"  required>
+		<el-dialog title="支付密码验证" :visible.sync="pwdFormDialog" width="40%">
+		  <el-form :model="payPwdForm" :rules="payPwdRules" ref="payPwd" label-width="80px">
+		    <el-form-item label="密码" required prop="pwd">
 		      <el-input type="password" v-model="payPwdForm.pwd" show-password></el-input>
 		    </el-form-item>
 		  </el-form>
 		  <view slot="footer" class="dialog-footer">
-			<el-button type="primary" @click="handleConfirmPayOrder">确定</el-button>
+			<el-button type="primary" @click="submitForm('payPwd')">确定</el-button>
 		  </view>
 		</el-dialog>
 		
 		
 		
 		
-		<el-dialog title="短信验证" :visible.sync="codeFormDialog" width="40%" destroyOnClose>
-		  <el-form :model="codeForm" label-width="80px">
-		    <el-form-item label="验证码"  required>
+		<el-dialog title="短信验证" :visible.sync="codeFormDialog" width="40%">
+		  <el-form :model="codeForm" :rules="codeRules" ref="code" label-width="80px">
+		    <el-form-item label="验证码" prop="code" required>
 				<el-row >
 					<el-col :span="16">
 						<el-input v-model="codeForm.code"></el-input>
 					</el-col>
 					<el-col :span="8" class="u-p-l-20">
-						 <el-button style="width: 100%;" type="primary" plain>获取验证码</el-button>
+						 <el-button 
+							style="width: 100%;" 
+							type="primary" 
+							plain 
+							:disabled="SendMsgDisabled"
+							@click="handleSendCode()"
+						>	
+							<template v-if="SendMsgDisabled">
+								<view class="u-flex">
+									<u-count-down
+										:time="time"
+										format="ss"
+										:autoStart="false"
+										ref="codeCountDown"
+										@finish="handleCountDownFinsh"
+									></u-count-down>
+									<text class="u-p-l-10">秒后再操作</text>
+								</view>
+								
+							</template>
+							<template v-else>
+								获取短信验证码
+							</template>
+							 
+						 </el-button>
 					</el-col>
 				</el-row>
 		    </el-form-item>
 		  </el-form>
 		  <view slot="footer" class="dialog-footer">
-			<el-button type="primary" @click="codeFormDialog = false">确定</el-button>
+			<el-button type="primary" @click="submitForm('code')">确定</el-button>
 		  </view>
 		</el-dialog>
 		
@@ -424,17 +448,37 @@
 				  phone: '',
 				  address: ''
 				}],
+				time: 60*1000,
 				payPwdForm: {
 					pwd: ''
 				},
+				payPwdRules: {
+					pwd: [
+						{
+							required: true,
+							message: '请输入支付密码',
+							trigger: ['blur', 'change'],
+						}
+					]
+				},
 				codeForm: {
 					code: ''
+				},
+				codeRules: {
+					code: [
+						{
+							required: true,
+							message: '请输入短信验证码',
+							trigger: ['blur', 'change']
+						}
+					]
 				},
 				couponShow: false,
 				addrTableShow: false,
 				pwdFormDialog: false,
 				codeFormDialog: false,
 				currentRow: {},
+				SendMsgDisabled: false,
 				currentRow_addr: {},
 				couponList: [],
 				info: {
@@ -496,6 +540,7 @@
 				}]
 				this.info = res
 			},
+			// 支付
 			handlePayOrder() {
 				if(true) {
 					this.$confirm(`有可使用的优惠项，是否放弃优惠直接支付订单?`, '提示', {
@@ -503,20 +548,15 @@
 						cancelButtonText: '看看优惠',
 						type: 'warning'
 					}).then(() => {
-						this.handleShowPwdBox()
+						uni.navigateTo({
+							url: `/pages/pay_tool/pay_tool?order_id=${this.id}&&coupon_id=${this.info.list.coupon_id}`
+						})
 					}).catch((e) => {
 						this.handleShowCouponBox()
 					});
 				}
 			},
-			handleConfirmPayOrder() {
-				if(!this.payPwdForm.pwd) return
-				this.$message({
-					type: 'success',
-					message: '支付成功!'
-				});
-				this.handleShowPwdBox()
-			},
+
 			//取消订单
 			handleExitOrderMsg() {
 				this.$confirm(`是否取消订单?`, '提示', {
@@ -524,7 +564,7 @@
 					cancelButtonText: '再考虑一下',
 					type: 'warning'
 				}).then(async () => {
-					let res = await this.$http.get('/User/order_cancel', {params: {order_id: this.id}})
+					let res = await this.$http.get('User/order_cancel', {params: {order_id: this.id}})
 					if(res.code != 1) return
 					this.$message({
 						type: 'success',
@@ -671,23 +711,26 @@
 					cancelButtonText: '再考虑一下',
 					type: 'warning'
 				}).then(async () => {
+					let baseParamsObj = {
+						order_id: this.id
+					}
 					if(this.info.list.pay_tool == 9) {
+						let res = await this.$http.get('User/sinopay_ok2', {params: baseParamsObj});
+						if(res.code != 1) return;
 						
 					}
 					else if(this.info.list.pay_tool == 2) {
+						//弹出短信验证输入框
+						this.codeFormDialog = true;
+						this.handleSendCode()
 						
+						return
 					}
 					else {
-						
+						//弹出支付密码输入框
+						this.pwdFormDialog = true;
+						return
 					}
-					
-					
-					
-					
-					
-					
-					let res = await this.$http.get('/User/apply_tran_self', {params: {order_id: this.id}})
-					if(res.code != 1) return
 					this.$message({
 						type: 'success',
 						message: res.msg || '成功'
@@ -699,6 +742,76 @@
 				}).catch(() => {
 						   
 				});
+			},
+			//发送短信验证码
+			async handleSendCode() {
+				if(this.SendMsgDisabled) return
+				this.SendMsgDisabled = true;
+				this.$nextTick(() =>{
+					this.$refs.codeCountDown.start()
+				})
+				
+				let res = await this.$http.get('User/get_mobile_code_order', {
+					params: {
+						order_id: this.id
+					}
+				})
+				if(res.code != 1) return;
+				this.$message({
+					type: 'success',
+					message: '短信验证已发送'
+				});
+			},
+			handleCountDownFinsh() {
+				this.SendMsgDisabled = false;
+				this.$refs.codeCountDown.reset()
+			},
+			
+			//验证表单
+			submitForm(formName) {
+				this.$refs[formName].validate(async (valid) => {
+					if (valid) {
+						let res
+						if(formName == 'code') {
+							res = await this.sinopayOkByCode()
+							if(res.code != 1) return;
+							this.codeFormDialog = false
+						}
+						else if(formName == 'payPwd') {
+							res = await this.sinopayOkByPwd()
+							if(res.code != 1) return;
+							this.pwdFormDialog = false
+						}
+						
+						this.$message({
+							type: 'success',
+							message: '收货成功'
+						});
+						uni.showLoading({
+							title: '获取最新数据中'
+						})
+						await this.getData()
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
+			},
+			async sinopayOkByPwd() {
+				return await this.$http.get('User/sinopay_ok', {
+					params: {
+						order_id: this.id,
+						psw: this.payPwdForm.pwd
+					}
+				})
+			},
+			async sinopayOkByCode() {
+				return await this.$http.get('User/sinopay_ok3', {
+					params: {
+						order_id: this.id,
+						code: this.codeForm.code
+					}
+				})
 			},
 		}
 	}
@@ -714,6 +827,12 @@
 		display: inline-block;
 		line-height: 16px;
 	
+	}
+	.u-count-down {
+		/deep/ .u-count-down__text {
+			line-height: 1em;
+			color: inherit;
+		}
 	}
 	.coupon-table {
 		/deep/ .el-dialog__footer {

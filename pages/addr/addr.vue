@@ -13,7 +13,7 @@
 						</view>
 					</view>
 					<view class="u-p-30 u-p-l-60">
-						<el-button type="primary" plain size="medium" @click="dialogFormVisible = true">新增地址</el-button>
+						<el-button type="primary" plain size="medium" @click="handleShowAddBox">新增地址</el-button>
 					</view>
 
 					<view class="content-list-wrap u-flex u-flex-wrap u-col-top">
@@ -29,19 +29,19 @@
 										</view>
 										<view class="h-item card-btns u-flex u-flex-between">
 											<view class="h-i-btn set-default-btns" v-if="!item.auto">
-												<el-button type="text" class="u-p-0">设为默认地址</el-button>
+												<el-button type="text" class="u-p-0" @click="setDefaultAddr(item)">设为默认地址</el-button>
 											</view>
 											<view class="h-i-btn">
 												<el-button type="text" class="u-p-0" @click="editAddr(item)">编辑
 												</el-button>
 											</view>
-											<view class="h-i-btn">
+											<!-- <view class="h-i-btn">
 												<el-popconfirm placement="bottom-end" title="确认删除该收货地址？" class="u-p-0"
 													@confirm="deletAddr(item)">
 													<el-button slot="reference" class="u-p-0" type="text">删除</el-button>
 												</el-popconfirm>
 
-											</view>
+											</view> -->
 
 										</view>
 									</view>
@@ -72,7 +72,7 @@
 			</view>
 
 		</view>
-		<el-dialog title="编辑收货地址" :visible.sync="dialogFormVisible" @close="resetForm('ruleForm')">
+		<el-dialog title="编辑收货地址" :visible.sync="dialogFormVisible" @close="handleResetForm('ruleForm')">
 			<el-form :model="addrForm" :rules="rules" ref="ruleForm" label-width="100px">
 				<el-form-item label="收货人" prop="name">
 					<el-input v-model="addrForm.name"></el-input>
@@ -81,8 +81,17 @@
 					<el-input v-model="addrForm.mobile"></el-input>
 				</el-form-item>
 				<el-form-item label="所在地区" prop="regional_name">
-					<el-input v-model="addrForm.regional_name"></el-input>
-					<!-- <el-cascader v-model="addrForm.regional_name" :options="options" @change="handleChange"></el-cascader> -->
+					<!-- <el-input v-model="addrForm.regional_name"></el-input> -->
+					<el-cascader 
+						v-model="addrForm.regional_name" 
+						:options="options" 
+						@change="handleChange"
+						:props="{
+							value: 'id',
+							label: 'value',
+							children: 'childs'
+						}"
+					></el-cascader>
 				</el-form-item>
 				<el-form-item label="详细地址" prop="address">
 					<el-input type="textarea" v-model="addrForm.address"></el-input>
@@ -100,34 +109,12 @@
 </template>
 
 <script>
+	import {mapState, mapActions} from 'vuex'
 	export default {
 		data() {
 			return {
 				menuActive: '2-3',
 				dialogFormVisible: false,
-				options: [{
-					value: 'zhinan',
-					label: '指南',
-					children: [{
-						value: 'shejiyuanze',
-						label: '设计原则',
-						children: [{
-							value: 'yizhi',
-							label: '一致'
-						}]
-					}]
-				}, {
-					value: 'zhinan',
-					label: '指南2',
-					children: [{
-						value: 'shejiyuanze',
-						label: '设计原则2',
-						children: [{
-							value: 'yizhi',
-							label: '一致2'
-						}]
-					}]
-				}, ],
 				addrForm: {
 					name: '',
 					mobile: '',
@@ -161,45 +148,113 @@
 				dataList: []
 			}
 		},
-		onLoad() {
-			this.getData()
+		async onLoad() {
+			uni.showLoading()
+			await this.getData()
+			await this.checkReginalData()
+			console.log(this.reginal_list)
+		},
+		computed: {
+			...mapState(['reginal_list']),
+			options() {
+				return this.reginal_list
+			}
 		},
 		methods: {
+			...mapActions(['checkReginalData']),
 			async getData() {
 				let res = await this.$http.get('address')
 				if(res.code != 1) return;
 				this.dataList = res.list.list
+				this.$message({
+					type: 'success',
+					message: '成功获取最新数据!'
+				});
 			},
 			handleChangeDialogShow(formName) {
 				this.dialogFormVisible = !this.dialogFormVisible
 				if (!this.dialogFormVisible) {
-					this.resetForm(formName)
+					this.handleResetForm(formName)
 				}
 			},
-			resetForm(formName) {
-				this.$refs[formName].resetFields();
+			handleResetForm(formName) {
+				this.renderFormData({
+					regional: "",
+				})
+				this.$nextTick(() => {
+					this.$refs[formName].clearValidate()
+				})
+				
+			},
+			handleShowAddBox() {
+				this.renderFormData({
+					regional: "",
+				})
+				this.handleChangeDialogShow()
 			},
 			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
+				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						this.$http.get('User/address_change', {params: this.addrForm})
+						uni.showLoading()
+						let res = await this.handleChangeAddr()
+						if(res.code != 1) return;
+						this.$message({
+							type: 'success',
+							message: '提交成功!'
+						});
+						uni.showLoading()
 						this.handleChangeDialogShow(formName)
+						await this.getData()
 					} else {
 						console.log('error submit!!');
 						return false;
 					}
 				});
 			},
-			handleChange(value) {
-				console.log(value);
+			async handleChangeAddr() {
+				let addr = this.addrForm
+				return await this.$http.get('User/address_change', {
+					params: {
+						name: addr.name,
+						mobile: addr.mobile,
+						regional: addr.regional_name[addr.regional_name.length - 1],
+						address: addr.address,
+						address_id: addr.id,
+						auto: addr.auto ? "1": "0",
+					},
+				})
 			},
-			editAddr(data) {
+			handleChange(value) {
+				console.log(this.addrForm.regional_name);
+			},
+			async setDefaultAddr(data) {
+				this.renderFormData(data)
+				this.addrForm.auto = true;
+				uni.showLoading()
+				let res = await this.handleChangeAddr()
+				if(res.code != 1) return;
+				this.$message({
+					type: 'success',
+					message: '设置成功!'
+				});
+				uni.showLoading()
+				await this.getData()
+			},
+			renderFormData(data) {
+				let regional = data.regional.toString();
+				let newArr = []
+				for (let i = 0; i < regional.length ;) {
+					newArr.push(regional.slice(0,i+=2))
+				}
 				this.addrForm.id = data.id
 				this.addrForm.mobile = data.mobile
 				this.addrForm.name = data.name
-				this.addrForm.regional_name = data.regional_name
+				this.addrForm.regional_name = newArr
 				this.addrForm.address = data.address
 				this.addrForm.auto = data.auto ? true : false
+			},
+			editAddr(data) {
+				this.renderFormData(data)
 				this.handleChangeDialogShow('ruleForm')
 			},
 			deletAddr(data) {

@@ -6,6 +6,7 @@ export const state = {
 	menuList,
 	menuActive: '',
 	cart: uni.getStorageSync('cart') || [],
+	reginal_list: [],
 	sinopay: {
 		// business_flag 
 		// lecerti_code 法人身份证

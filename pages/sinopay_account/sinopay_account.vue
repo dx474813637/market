@@ -50,7 +50,7 @@
 									<!-- <navigator url="/pages/recharge/recharge" class="u-m-l-40">
 										<el-button type="primary" size="mini">提现</el-button>
 									</navigator> -->
-									<navigator url="/pages/withdrawal/withdrawal" class="u-m-l-40">
+									<navigator :url="`/pages/recharge/recharge?user_fundaccno=${info.info.user_fundaccno}`" class="u-m-l-40">
 										<el-button type="primary" size="mini">充值</el-button>
 									</navigator>
 									
@@ -223,18 +223,16 @@
 				this.info = data[this.type == 2 ? 'user_fundaccno_s' : 'user_fundaccno_b']
 			},
 			async handleGoRelationAcc() {
+				
 				if(this.type == 2) {
-					this.type = 1
+					uni.navigateTo({
+						url: '/pages/sinopay_account/sinopay_account?type=1'
+					})
 				}else {
-					this.type = 2
+					uni.navigateTo({
+						url: '/pages/sinopay_account/sinopay_account?type=2'
+					})
 				}
-				uni.showLoading({
-					title: '账户数据加载中'
-				})
-				await this.getData();
-				uni.showToast({
-					title: '数据加载完成'
-				})
 			}
 		}
 	}
@@ -242,7 +240,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

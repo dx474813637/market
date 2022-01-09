@@ -14,44 +14,24 @@
 							</navigator>
 							<view class="header-title">充值订单列表</view>
 						</view>
-						<view class="c-h-item u-flex">
-							<navigator url="/pages/withdrawal_list/withdrawal_list" class="u-m-r-20 u-font-26 d-theme-color">
-								<text class="u-p-r-10">提现记录</text>
-								<i class="custom-icon-right-circle custom-icon u-font-30"></i>
-							</navigator>
-						</view>
 					</view>
 					<view class="content-table-wrap">
-						<el-table :data="tableData" style="width: 100%" border>
-							<el-table-column prop="id" label="ID" width="100">
+						<el-table :data="tableData" style="width: 100%" border v-loading="loading">
+							<el-table-column prop="id" label="ID" width="100" >
 							</el-table-column>
-							<el-table-column prop="a" label="现金账号">
+							<el-table-column prop="user_fundaccno" label="充值账户" >
 							</el-table-column>
-							<el-table-column prop="p1" label="充值金额" >
+							<el-table-column prop="amount" label="金额/元" align="right" >
 							</el-table-column>
-							<el-table-column label="状态">
+							<el-table-column prop="status_name" label="状态" align="center" >
+							</el-table-column>
+							<el-table-column prop="ctime" label="充值时间" align="center" >
+							</el-table-column>
+							<el-table-column label="操作" align="center">
 								<template slot-scope="scope">
-									<template v-if="scope.row.status == 1">
-										充值成功
-									</template>
-									<template v-else-if="scope.row.status == 2">
-										<view class="u-flex">
-											<text class="u-p-r-20">待验证</text>
-											<el-button type="primary" plain size="mini">点击验证</el-button>
-										</view>
-									</template>
-									<template v-else>
-										充值失败
-									</template>
-								</template>
-							</el-table-column>
-							<el-table-column prop="time" label="充值日期">
-							</el-table-column>
-							<el-table-column label="操作" align="right" width="100">
-								<template slot-scope="scope">
-									<view class="u-flex u-row-right">
-										<navigator url="/pages/recharge_detail/recharge_detail">
-											<el-button type="primary" size="mini">查看</el-button>
+									<view class="u-flex u-row-center">
+										<navigator :url="`/pages/recharge_detail/recharge_detail?id=${scope.row.quick_id}`">
+											<el-button type="text" size="mini">查看详情</el-button>
 										</navigator>
 									</view>
 								</template>
@@ -59,9 +39,9 @@
 						</el-table>
 					</view>
 					<view class="content-page-wrap">
-						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-							:current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-							layout="total, sizes, prev, pager, next, jumper" :total="400">
+						<el-pagination @current-change="handleCurrentChange"
+							:current-page="currentPage" :page-size="pageSize"
+							layout="total, prev, pager, next, jumper" :total="total">
 						</el-pagination>
 					</view>
 				</view>
@@ -75,70 +55,45 @@
 	export default {
 		data() {
 			return {
-				menuActive: '3-3',
+				menuActive: '3-1',
 				currentPage: 1,
-				tableData: [{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '3',
-						time: '2021-11-17 09:36:48'
-					},
-					{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '1',
-						time: '2021-11-17 09:36:48'
-					},
-					{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '2',
-						time: '2021-11-17 09:36:48'
-					},
-					{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '1',
-						time: '2021-11-17 09:36:48'
-					},
-					{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '3',
-						time: '2021-11-17 09:36:48'
-					},
-					{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '2',
-						time: '2021-11-17 09:36:48'
-					},
-					{
-						id: 123,
-						a: '1100000190',
-						p1: 1234,
-						status: '3',
-						time: '2021-11-17 09:36:48'
-					},
-				]
+				tableData: [],
+				loading: false,
+				pageSize: 20,
+				total: 0,
 			}
+		},
+		async onLoad() {
+			await this.getData()
 		},
 		computed: {
 
 		},
-		methods: {}
+		methods: {
+			async getData() {
+				this.loading = true
+				let res = await this.$http.get('recharge_list', {
+					params: {
+						p: this.currentPage
+					}
+				})
+				this.loading = false
+				if(res.code != 1) return;
+				this.tableData = res.list.list;
+				this.pageSize = res.list.page_record;
+				this.total = res.list.pw_rec_total
+			},
+			async handleCurrentChange(p) {
+				this.currentPage = p;
+				this.getData()
+			}
+		}
 	}
 </script>
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

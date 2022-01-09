@@ -84,7 +84,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

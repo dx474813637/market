@@ -11,7 +11,7 @@
 						<view class="item-left u-flex">
 							<view class="item-top u-flex ">
 								<view class="top-avatar">
-									<el-image src="../../static/img/p1.jpg"></el-image>
+									<el-image :src="user.mem_pic"></el-image>
 								</view>
 								<view class="name">Hi, {{sinopay.name}}</view>
 								<view class="welcome">你好，欢迎登录</view>
@@ -26,22 +26,32 @@
 									<view class="u-flex u-row-between">
 										<view class="item u-flex">
 											<view class="name">{{sinopay.name}} （账号：{{sinopay.bind_info.market_login}}）</view>
-											<navigator url="/pages/bankcard_bind/bankcard_bind">
+											<navigator 
+												v-if="sinopay.bind_info.state != 2" 
+												:url="`/pages/bankcard_bind/bankcard_bind?user_fundaccno=${walletInfo.user_fundaccno_b}`"
+											>
 												<el-button round class="u-m-l-30" type="primary" plain size="mini">绑卡认证</el-button>
 											</navigator>
 											
 										</view>
 										<view class="item u-flex">
 											<navigator url="/pages/sinopay/sinopay"  class="item-btn">
-												<i class="custom-icon-verified custom-icon"></i>
-												<view class="btn-title">已认证</view>
+												<template v-if="sinopay.auth_state == 1">
+													<i class="custom-icon-verified custom-icon"></i>
+													<view class="btn-title">已认证</view>
+												</template>
+												<template v-else>
+													<i class="custom-icon-warning-circle custom-icon"></i>
+													<view class="btn-title">未认证</view>
+												</template>
+												
 											</navigator>
 											<navigator url="/pages/sinopay_pay_list/sinopay_pay_list"  class="item-btn">
-												<i class="custom-icon-verified custom-icon"></i>
+												<i class="custom-icon-YUAN custom-icon"></i>
 												<view class="btn-title">付款记录</view>
 											</navigator>
 											<navigator url="/pages/sinpay_safe/sinpay_safe"  class="item-btn">
-												<i class="custom-icon-verified custom-icon"></i>
+												<i class="custom-icon-setting custom-icon"></i>
 												<view class="btn-title">安全设置</view>
 											</navigator>
 										</view>
@@ -65,11 +75,11 @@
 										</view>
 									</view>
 									<view class="item-right u-flex u-row-center">
-										<navigator url="/pages/withdrawal/withdrawal" class="u-m-b-30">
-											<el-button type="danger" size="medium">充值</el-button>
+										<navigator url="/pages/sinopay_account/sinopay_account?type=1" class="u-m-b-30">
+											<el-button type="primary" plain size="medium">付款账户信息</el-button>
 										</navigator>
-										<navigator url="/pages/recharge/recharge">
-											<el-button type="primary" size="medium">提现</el-button>
+										<navigator :url="`/pages/recharge/recharge?user_fundaccno=${walletInfo.info.user_fundaccno}`">
+											<el-button type="danger" size="medium">充值</el-button>
 										</navigator>
 									</view>
 									
@@ -82,7 +92,7 @@
 							<view slot="header" class="clearfix">
 								<span>业务操作</span>
 							</view>
-							<view class="text item card-m u-flex u-row-between">
+							<view class="text item card-m u-flex">
 								<navigator url="/pages/bankcard/bankcard" class="c-m-item u-border u-flex u-row-center">
 									<view class="icon-wrap">
 										<i class="custom-icon custom-icon-idcard"></i>
@@ -93,14 +103,17 @@
 									<view class="icon-wrap">
 										<i class="custom-icon custom-icon-creditcard"></i>
 									</view>
-									<view class="c-m-title">充值 / 提现 / 转账 记录</view>
+									<view class="c-m-title">充值记录</view>
 								</navigator>
-								<navigator url="/pages/sinopay_account/sinopay_account?type=2" class="c-m-item u-border u-flex u-row-center">
-									<view class="icon-wrap">
-										<i class="custom-icon custom-icon-accountbook"></i>
-									</view>
-									<view class="c-m-title">收款账户<text>{{sinopay.user_fundaccno_s}}</text></view>
-								</navigator>
+								<template v-if="walletInfo.info">
+									<navigator url="/pages/sinopay_account/sinopay_account?type=2" class="c-m-item u-border u-flex u-row-center">
+										<view class="icon-wrap">
+											<i class="custom-icon custom-icon-accountbook"></i>
+										</view>
+										<view class="c-m-title">收款账户<text>{{sinopay.user_fundaccno_s}}</text></view>
+									</navigator>
+								</template>
+								
 							</view>
 						</el-card>
 					</view>
@@ -144,6 +157,10 @@
 		  title="提示"
 		  :visible.sync="dialogVisible"
 		  width="550px"
+		  :close-on-click-modal="false"
+		  :close-on-press-escape="false"
+		  :show-close="false"
+		  :modal-append-to-body="false"
 		>
 			<span>您还未绑定支付账号，您可以进行以下操作：</span>
 			<span slot="footer" class="dialog-footer">
@@ -165,22 +182,27 @@
 				dialogVisible: false,
 				walletInfo: {
 					info: {}
-				}
+				},
+				State: 0,
 			}
 		}, 
-		onLoad() {
+		async onLoad() {
 			// this.showRegDialog()
-			this.getData()
+			uni.showLoading()
+			await this.getData()
 		},
 		computed: {
-			...mapState(['sinopay']),
+			...mapState(['sinopay', 'user']),
 		},
 		methods: {
 			...mapMutations(['updateSinopay']),
 			async getData() {
-				let data = await this.$http.get('moneyCenter3.html')
+				let data = await this.$http.get('moneyCenter3')
 				this.updateSinopay(data.list);
-				this.walletInfo = data.user_fundaccno_b
+				this.walletInfo = data.user_fundaccno_b;
+				if(data.State == 1) {
+					this.dialogVisible = true
+				}
 			},
 			handleChangeFlag() {
 				this.dialogVisible = !this.dialogVisible
@@ -213,7 +235,7 @@
 		}
 	}
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;
@@ -304,11 +326,12 @@
 								padding: 0px 12px 0;
 								width: 60px;
 								.custom-icon {
-									font-size: 30px;
+									font-size: 28px;
 									color: $theme-color;
 								}
 								.btn-title {
 									font-size: 12px;
+									margin-top: 3px;
 									color: #666;
 								}
 							}

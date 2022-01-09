@@ -12,16 +12,24 @@
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
-							<view class="header-title">充值订单详情</view>
+							<view class="header-title">充值详情</view>
 						</view>
 					</view>
 					<view class="content-sinopay">
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">充值账户</view>
+								<view class="sinopay-label">现金账号</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">1100000190</view>
+								<view class="sinopay-info">{{list.user_fundaccno}}</view>
+							</el-col>
+						</el-row>
+						<el-row type="flex" align="middle">
+							<el-col :span="5" class="sinopay-label-col">
+								<view class="sinopay-label">充值银行卡</view>
+							</el-col>
+							<el-col>
+								<view class="sinopay-info">{{list.card.accNo}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -29,23 +37,15 @@
 								<view class="sinopay-label">充值金额</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">123</view>
+								<view class="sinopay-info">{{list.amount}} 元</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">银行卡后四位</view>
+								<view class="sinopay-label">充值手续费</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">7714</view>
-							</el-col>
-						</el-row>
-						<el-row type="flex" align="middle">
-							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">银行卡类型</view>
-							</el-col>
-							<el-col>
-								<view class="sinopay-info">借记卡</view>
+								<view class="sinopay-info">{{list.fee}} 元</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -53,23 +53,31 @@
 								<view class="sinopay-label">状态</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">充值成功</view>
+								<view class="sinopay-info">
+									<template v-if="list.status == 0">
+										待验证
+									</template>
+									<template v-else-if="list.status == 1">
+										充值成功
+									</template>
+									<template v-else-if="list.status == 2">
+										充值失败
+									</template>
+									<template v-else-if="list.status == 3">
+										充值中
+									</template>
+									<template v-else-if="list.status == 4">
+										已退款
+									</template>
+								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">申请充值时间</view>
+								<view class="sinopay-label">充值时间</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">2021-11-19 09:59:28</view>
-							</el-col>
-						</el-row>
-						<el-row type="flex" align="middle">
-							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">备注</view>
-							</el-col>
-							<el-col>
-								<view class="sinopay-info"></view>
+								<view class="sinopay-info">{{list.ctime}}</view>
 							</el-col>
 						</el-row>
 					</view>
@@ -85,19 +93,34 @@
 		data() {
 			return {
 				menuActive: '3-3',
+				id: '',
+				list: {}
 			}
 		}, 
-		computed: {
-			
+		async onLoad(opt) {
+			if(opt && opt.hasOwnProperty('id')) {
+				this.id = opt.id
+				uni.showLoading()
+				await this.getData()
+			}
 		},
 		methods: {
+			async getData() {
+				let res = await this.$http.get('recharge_detail', {
+					params: {
+						id: this.id
+					}
+				})
+				if(res.code != 1) return ;
+				this.list = res.list
+			}
 		}
 	}
 </script>
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

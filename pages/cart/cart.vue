@@ -275,7 +275,7 @@
 	$p-img-w: 70px !default;
 
 	.wrapper {
-		width: 1300px;
+		 
 		.empty-wrap {
 			font-size: 16px;
 			line-height: 30px;

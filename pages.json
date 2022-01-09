@@ -163,7 +163,7 @@
             
         }
         ,{
-            "path" : "pages/withdrawal_list/withdrawal_list",
+            "path" : "pages/withdraw_list/withdraw_list",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -172,7 +172,7 @@
             
         }
         ,{
-            "path" : "pages/withdrawal_detail/withdrawal_detail",
+            "path" : "pages/withdraw_detail/withdraw_detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -208,7 +208,7 @@
             
         }
         ,{
-            "path" : "pages/withdrawal/withdrawal",
+            "path" : "pages/withdraw/withdraw",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -326,6 +326,15 @@
         }
         ,{
             "path" : "pages/creditDetail/creditDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/billDetail/billDetail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

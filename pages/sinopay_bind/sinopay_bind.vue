@@ -9,7 +9,7 @@
 				<view class="wrap-item content">
 					<view class="content-header u-flex u-row-between u-border-bottom">
 						<view class="c-h-item u-flex">
-							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
+							<navigator url="/pages/money_center/money_center" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
 							<view class="header-title">绑定我的Sinopay账号</view>
@@ -52,8 +52,8 @@
 							<el-form-item>
 								<view class="agree">
 									<el-checkbox v-model="checked">我已阅读并同意</el-checkbox>
-									<el-link :underline="false" href="" target="_blank">《平安银行电子商务“见证宝”商户服务协议》</el-link>
-									<el-link :underline="false" href="" target="_blank">《平安数字用户协议》</el-link>
+									<el-link :underline="false" href="https://my.orangebank.com.cn/orgLogin/hd/act/jianzb/jzbxy.html" target="_blank">《平安银行电子商务“见证宝”商户服务协议》</el-link>
+									<el-link :underline="false" href="https://auth.orangebank.com.cn/#/m/cDealOne" target="_blank">《平安数字用户协议》</el-link>
 								</view>
 								
 							</el-form-item>
@@ -118,6 +118,26 @@
 					}
 				}
 				return rule
+			},
+			params() {
+				let params = {
+					sinopay: this.ruleForm.sinopay,
+					sinopay_pwd: this.ruleForm.sinopay,
+				}
+				if(this.typeForm.type == '1' || this.typeForm.type == '2') {
+					params = {
+						...params,
+						name: this.ruleForm.name,
+						sfz: this.ruleForm.sfz,
+					}
+				}else if(this.typeForm.type == '3') {
+					params = {
+						...params,
+						cpyname2: this.ruleForm.cpyname2,
+						cpycode2: this.ruleForm.cpycode2,
+					}
+				}
+				return params
 			}
 		},
 		onLoad() {
@@ -128,9 +148,33 @@
 				console.log(e)
 			},
 			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
+				if(!this.checked) {
+					this.$alert('请阅读并同意勾选用户协议', '提示', {
+					  confirmButtonText: '确定'
+					});
+					return
+				}
+				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						alert('submit!');
+						
+						let res = await this.$http.get('User/sinopay_bind', {
+							params: this.params
+						})
+						if(res.code != 1) return;
+						this.$confirm(res.msg, '消息', {
+						  confirmButtonText: '开通资金账户',
+						  cancelButtonText: '返回资金中心',
+						  type: 'success'
+						}).then(() => {
+						  uni.navigateTo({
+						  	url: '/pages/money_center/money_center'
+						  })
+						}).catch(() => {
+						  uni.navigateTo({
+						  	url: '/pages/money_center/money_center'
+						  })      
+						});
+						
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -143,7 +187,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

@@ -12,13 +12,13 @@
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
-							<view class="header-title">提现详情</view>
+							<view class="header-title">充值订单详情</view>
 						</view>
 					</view>
 					<view class="content-sinopay">
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">现金账号</view>
+								<view class="sinopay-label">充值账户</view>
 							</el-col>
 							<el-col>
 								<view class="sinopay-info">1100000190</view>
@@ -26,15 +26,7 @@
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">提现银行卡号</view>
-							</el-col>
-							<el-col>
-								<view class="sinopay-info">955****4237714</view>
-							</el-col>
-						</el-row>
-						<el-row type="flex" align="middle">
-							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">提现金额</view>
+								<view class="sinopay-label">充值金额</view>
 							</el-col>
 							<el-col>
 								<view class="sinopay-info">123</view>
@@ -42,10 +34,18 @@
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">提现手续费</view>
+								<view class="sinopay-label">银行卡后四位</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">0</view>
+								<view class="sinopay-info">7714</view>
+							</el-col>
+						</el-row>
+						<el-row type="flex" align="middle">
+							<el-col :span="5" class="sinopay-label-col">
+								<view class="sinopay-label">银行卡类型</view>
+							</el-col>
+							<el-col>
+								<view class="sinopay-info">借记卡</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -53,12 +53,12 @@
 								<view class="sinopay-label">状态</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">提现成功</view>
+								<view class="sinopay-info">充值成功</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">申请提现时间</view>
+								<view class="sinopay-label">申请充值时间</view>
 							</el-col>
 							<el-col>
 								<view class="sinopay-info">2021-11-19 09:59:28</view>
@@ -97,7 +97,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

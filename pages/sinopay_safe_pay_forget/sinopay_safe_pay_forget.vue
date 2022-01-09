@@ -38,7 +38,30 @@
 										<el-input v-model="ruleForm.code" clearable></el-input>
 									</el-col>
 									<el-col :offset="1" :span="7">
-										<el-button type="primary" plain class="getCode">获取短信验证码</el-button>
+										<el-button 
+											type="primary" 
+											plain 
+											class="getCode" 
+											:disabled="SendMsgDisabled"
+											@click="handleSendCode()"
+										>
+											<template v-if="SendMsgDisabled">
+												<view class="u-flex">
+													<u-count-down
+														:time="time"
+														format="ss"
+														:autoStart="false"
+														ref="codeCountDown"
+														@finish="handleCountDownFinsh"
+													></u-count-down>
+													<text class="u-p-l-10">秒后再操作</text>
+												</view>
+												
+											</template>
+											<template v-else>
+												获取短信验证码
+											</template>
+										</el-button>
 									</el-col>
 								</el-row>
 
@@ -81,6 +104,8 @@
 			};
 			return {
 				menuActive: '3-1',
+				time: 60*1000,
+				SendMsgDisabled: false,
 				ruleForm: {
 					new_pwd: '',
 					cfm_pwd: '',
@@ -101,7 +126,8 @@
 						message: '请输入验证码',
 						trigger: 'change'
 					}]
-				}
+				},
+				
 
 			}
 		},
@@ -109,11 +135,44 @@
 
 		},
 		methods: {
-
+			async handleSendCode() {
+				if(this.SendMsgDisabled) return
+				this.SendMsgDisabled = true;
+				this.$nextTick(() =>{
+					this.$refs.codeCountDown.start()
+				})
+				
+				let res = await this.$http.get('User/sinopay_reset_passwd_mobile')
+				if(res.code != 1) return;
+				this.$message({
+					type: 'success',
+					message: '短信验证已发送'
+				});
+			},
+			handleCountDownFinsh() {
+				this.SendMsgDisabled = false;
+				this.$refs.codeCountDown.reset()
+			},
 			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
+				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						alert('submit!');
+						let res = await this.$http.get('User/sinopay_reset_passwd', {
+							params: {
+								code: this.ruleForm.code,
+								npay_passwd: this.ruleForm.new_pwd,
+								cpay_passwd: this.ruleForm.cfm_pwd,
+							}
+						})
+						if(res.code != 1) return;
+						this.$message({
+							type: 'success',
+							message: 'sinopay登录密码修改成功'
+						});
+						uni.navigateTo({
+							url: "/pages/sinpay_safe/sinpay_safe"
+						})
+						
+						
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -128,10 +187,16 @@
 	.getCode {
 		display: block;
 		width: 100%;
+		.u-count-down {
+			/deep/ .u-count-down__text {
+				line-height: 1em;
+				color: inherit;
+			}
+		}
 	}
 
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

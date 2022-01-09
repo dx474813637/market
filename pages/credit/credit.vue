@@ -59,17 +59,17 @@
 							</el-table-column>
 							<el-table-column label="创建时间" prop="ctime" align="right" width="180px"></el-table-column>
 							<el-table-column label="赊账到期日" width="110px" prop="end_day" align="right"></el-table-column>
-							<el-table-column label="支付状态" width="90px" align="right">
+							<el-table-column label="支付状态" width="90px" align="center">
 									<template slot-scope="scope">
 										<view class="">{{scope.row.pay_status_name}}</view>
 									</template>
 							</el-table-column>
-							<el-table-column label="逾期状态" width="90px" align="right">
+							<el-table-column label="逾期状态" width="90px" align="center">
 									<template slot-scope="scope">
 										<view class="">{{scope.row.over_status_name}}</view>
 									</template>
 							</el-table-column>
-							<el-table-column label="操作" width="145px" align="right">
+							<el-table-column label="操作" width="145px" align="center">
 								<template slot-scope="scope">
 									<view class="u-flex u-row-right">
 										<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.order_id}`">
@@ -195,7 +195,7 @@
 		}
 	}
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

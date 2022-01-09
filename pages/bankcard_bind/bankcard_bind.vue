@@ -16,39 +16,64 @@
 						</view>
 					</view>
 					<view class="form-wrap">
-						<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px">
-							<el-form-item label="选择现金账户" prop="user_fundaccno">
-								<el-select v-model="ruleForm.user_fundaccno" placeholder="请选择">
-									<el-option label="1111010000123 - 收款账户" value="1"></el-option>
-									<el-option label="1111010000122 - 付款账户" value="2"></el-option>
-								</el-select>
+						<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" :validate-on-rule-change="false">
+							
+							<el-form-item label="银行卡号" prop="bank_accno">
+								<el-input v-model="ruleForm.bank_accno" clearable></el-input>
 							</el-form-item>
-							<el-form-item label="账户名" prop="bank_accname">
-								<el-input v-model="ruleForm.bank_accname"></el-input>
+							<el-form-item label="银行名" prop="bank_name">
+								<view class="u-flex">
+									<view class="u-m-r-20 u-flex">
+										<template v-if="logo">
+											<el-image fit="contain" :src="logo" class="logo"></el-image>
+										</template>
+										<template v-else>
+											<i class="custom-icon-creditcard custom-icon u-font-40 d-theme-color"></i>
+										</template>
+									</view>
+									
+									<view v-if="ruleForm.bank_name">{{ruleForm.bank_name}}</view>
+									<view v-else class="" style="color: #999">填写完整的银行卡号，系统将自动关联银行名</view>
+									
+									<template v-if="loading">
+										<i class="el-icon-loading u-font-32 u-m-l-30"></i>
+									</template>
+								</view>
 							</el-form-item>
-							<el-form-item label="证件号码" prop="card_id">
-								<el-input v-model="ruleForm.card_id"></el-input>
-							</el-form-item>
-							<template v-if="limit == 1">
-								<el-form-item label="法人姓名" prop="legal_name">
+							<template v-if="list.sinop_type == 'C'">
+								<el-form-item label="持卡人" prop="bank_accname" clearable>
+									<el-input v-model="ruleForm.bank_accname"></el-input>
+								</el-form-item>
+								<el-form-item label="身份证" prop="card_id" clearable>
+									<el-input v-model="ruleForm.card_id"></el-input>
+								</el-form-item>
+							</template>
+							<template v-else-if="list.sinop_type == 'B'">
+								<el-form-item label="公司户名" prop="bank_accname" clearable>
+									<el-input v-model="ruleForm.bank_accname"></el-input>
+								</el-form-item>
+								<el-form-item label="信用代码" prop="card_id" clearable>
+									<el-input v-model="ruleForm.card_id"></el-input>
+								</el-form-item>
+								<el-form-item label="法人姓名" prop="legal_name" clearable>
 									<el-input v-model="ruleForm.legal_name"></el-input>
 								</el-form-item>
-								<el-form-item label="法人身份证" prop="lecerti_code">
+								<el-form-item label="法人身份证" prop="lecerti_code" clearable>
 									<el-input v-model="ruleForm.lecerti_code"></el-input>
 								</el-form-item>
 							</template>
+							<el-form-item label="手机号" prop="mobile" clearable>
+								<el-input v-model="ruleForm.mobile" placeholder="请输入该卡在银行的预留手机号"></el-input>
+							</el-form-item>
 							
-							<el-form-item label="开户行名称" prop="bank_name">
-								<el-input v-model="ruleForm.bank_name"></el-input>
-							</el-form-item>
-							<el-form-item label="银行账户号" prop="bank_accno">
-								<el-input v-model="ruleForm.bank_accno"></el-input>
-							</el-form-item>
-							<el-form-item label="手机号" prop="mobile">
-								<el-input v-model="ruleForm.mobile"></el-input>
-							</el-form-item>
+							
 							<el-form-item>
-								<el-checkbox v-model="checked">同意</el-checkbox>
+								<view class="agree">
+									<el-checkbox v-model="checked">我已阅读并同意</el-checkbox>
+									<el-link :underline="false" href="https://my.orangebank.com.cn/orgLogin/hd/act/jianzb/jzbxy.html" target="_blank">《平安银行电子商务“见证宝”商户服务协议》</el-link>
+									<el-link :underline="false" href="https://auth.orangebank.com.cn/#/m/cDealOne" target="_blank">《平安数字用户协议》</el-link>
+								</view>
+								
 							</el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -67,28 +92,32 @@
 		data() {
 			return {
 				menuActive: "3-2",
+				user_fundaccno: "",
 				checked: false,
+				logo: '',
+				loading: false,
+				list: {},
 				limit: 1, //1企业账户 //2个人账户
 				ruleForm: {
 					user_fundaccno: '',
-					bank_accname: 'bank_accname',
-					card_id: 'card_id',
-					bank_name: 'bank_name',
-					bank_accno: 'bank_accno',
-					mobile: 'mobile',
-					legal_name: 'legal_name',
-					lecerti_code: 'lecerti_code'
+					bank_accname: '',
+					card_id: '',
+					bank_accno: '',
+					mobile: '',
+					legal_name: '',
+					lecerti_code: '',
+					bank_name: ''
 				}
+			}
+		},
+		watch: {
+			['ruleForm.bank_accno'](n) {
+				uni.$u.debounce(this.lookUpBank, 1600)
 			}
 		},
 		computed: {
 			rules() {
 				let r = {
-					user_fundaccno: [{
-						required: true,
-						message: '请选择现金账户',
-						trigger: ['blur', 'change']
-					}, ],
 					bank_accname: [{
 						required: true,
 						message: '账户名不能为空',
@@ -99,15 +128,15 @@
 						message: '证件号码不能为空',
 						trigger: ['blur', 'change']
 					}, ],
-					bank_name: [{
-						required: true,
-						message: '开户行名称不能为空',
-						trigger: ['blur', 'change']
-					}, ],
 					bank_accno: [{
 						required: true,
 						message: '银行账户号不能为空',
 						trigger: ['blur', 'change']
+					}, ],
+					bank_name: [{
+						required: true,
+						message: '银行名不能为空',
+						trigger: ['change']
 					}, ],
 					mobile: [{
 						required: true,
@@ -115,7 +144,7 @@
 						trigger: ['blur', 'change']
 					}, ],
 				}
-				if (this.limit == 1) {
+				if (this.list.sinop_type == 'B') {
 					r = {
 						...r,
 						legal_name: [{
@@ -131,29 +160,105 @@
 					}
 				}
 				return r
+			},
+			paramsObj() {
+				let r = {
+					bank_accname: this.ruleForm.bank_accname,
+					card_id: this.ruleForm.card_id,
+					bank_accno: this.ruleForm.bank_accno,
+					mobile: this.ruleForm.mobile,
+					user_fundaccno: this.ruleForm.user_fundaccno,
+					bank_name: this.ruleForm.bank_name,
+				}
+				if (this.list.sinop_type == 'B') {
+					r = {
+						...r,
+						legal_name: this.ruleForm.legal_name,
+						lecerti_code: this.ruleForm.lecerti_code,
+					}
+				}
+				return r
 			}
 		},
-		onLoad() {
-
+		async onLoad(opt) {
+			if(opt && opt.hasOwnProperty('user_fundaccno')) {
+				this.user_fundaccno = opt.user_fundaccno
+				uni.showLoading()
+				await this.getData()
+			}
 		},
 		methods: {
+			async lookUpBank() {
+				this.loading = true
+				let res = await this.$http.get('User/sinopay_bank_name', {
+					params: {
+						no: this.ruleForm.bank_accno
+					}
+				})
+				this.loading = false
+				this.ruleForm.bank_name = res.list || ''
+				this.logo = res.logo || ''
+			},
 			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
+				if(!this.checked) {
+					this.$alert('请阅读并同意勾选用户协议', '提示', {
+					  confirmButtonText: '确定'
+					});
+					return
+				}
+				this.$refs[formName].validate( (valid) => {
 					if (valid) {
-						alert('submit!');
+						this.handleBindApply()
 					} else {
 						console.log('error submit!!');
 						return false;
 					}
 				});
 			},
+			async getData() {
+				let res = await this.$http.get('card_add.html', {
+					params: {
+						user_fundaccno: this.user_fundaccno
+					}
+				})
+				if(res.code != 1) return;
+				this.list = res.list;
+				if(res.list.name)  this.ruleForm.bank_accname = res.list.name;
+				if(res.list.bind_info.market_reg_no) this.ruleForm.card_id = res.list.bind_info.market_reg_no;
+			},
+			async handleBindApply() {
+				let res = await this.$http.get('User/bind_apply', {
+					params: this.paramsObj
+				})
+				if(res.code != 1) return;
+				this.$confirm('绑定成功', '提示', {
+				  confirmButtonText: '查看绑定详情',
+				  cancelButtonText: '返回资金中心',
+				  type: 'success'
+				}).then(() => {
+					uni.redirectTo({
+						url: `/pages/bankcard_detail/bankcard_detail?id${res.bind_id}`
+					})
+				 }).catch(() => {
+					uni.navigateTo({
+						url: '/pages/money_center/money_center'
+					})
+						  
+				});
+				
+			}
 		}
 	}
 </script>
 
 <style scoped lang="scss">
+	.logo {
+		height: 35px;
+		width: 50px;
+		display: block;
+	}
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {
@@ -197,6 +302,14 @@
 				padding: 30px 50px;
 				width: 600px;
 
+				.agree {
+					line-height: 20px;
+					
+					.el-link {
+						line-height: 20px;
+						display: inline;
+					}
+				}
 				.el-select {
 					width: 100%;
 

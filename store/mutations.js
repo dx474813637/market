@@ -10,6 +10,9 @@ export const mutations = {
 	updateReginalData(state, info) {
 		state.reginal_list = info
 	},
+	updateUserInfo(state, info) {
+		state.user = info
+	},
 	updateCartList(state, data) {
 		if(data.action == 'clearAll') {
 			state.cart = [];

@@ -1,7 +1,8 @@
 <script>
+	
 	export default {
-		onLaunch: function() {
-			
+		onLaunch: async function() {
+			this.$store.dispatch('checkUserInfo')
 		},
 		onShow: function() {
 			
@@ -44,5 +45,9 @@
 	.el-popconfirm__main {
 		margin-top: 10px;
 		margin-bottom: 10px;
+	}
+	.wrapper {
+		width: 80%;
+		min-width: 1200px;
 	}
 </style>

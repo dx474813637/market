@@ -13,28 +13,20 @@
 						</view>
 					</view>
 					<div class="content-table-wrap">
-						<el-table :data="tableData" style="width: 100%" border>
-							<el-table-column prop="name" label="卖家">
+						<el-table :data="tableData" style="width: 100%" border v-loading="loading">
+							<el-table-column prop="c_name" label="卖家">
 							</el-table-column>
-							<el-table-column prop="p1" label="订单金额/元" width="100">
+							<el-table-column prop="pay_price" label="订单金额/元" align="center">
 							</el-table-column>
-							<el-table-column prop="p2" label="实际支付/元" width="100">
+							<el-table-column prop="final_price" label="实际支付/元" align="center">
 							</el-table-column>
-							<el-table-column prop="time" label="下单时间">
+							<el-table-column prop="dinli_day" label="支付时间" align="center">
 							</el-table-column>
-							<el-table-column prop="type" label="支付工具" width="100">
-							</el-table-column>
-							<el-table-column prop="status" label="支付状态" width="100">
-							</el-table-column>
-							<el-table-column label="操作" align="right">
+							<el-table-column label="操作" align="center">
 								<template slot-scope="scope">
-									<view class="u-flex u-row-right">
-										<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.orderid}`">
-											<el-button type="text" size="mini">查看订单</el-button>
-										</navigator>
-										<text class="u-p-10">-</text>
-										<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.orderid}`">
-											<el-button type="text" size="mini">查看电子回单</el-button>
+									<view class="u-flex u-row-center">
+										<navigator :url="`/pages/billDetail/billDetail?id=${scope.row.id}`">
+											<el-button type="text" size="mini">查看详情</el-button>
 										</navigator>
 									</view>
 								</template>
@@ -42,9 +34,9 @@
 						</el-table>
 					</div>
 					<div class="content-page-wrap">
-						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-							:current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-							layout="total, sizes, prev, pager, next, jumper" :total="400">
+						<el-pagination @current-change="handleCurrentChange"
+							:current-page="currentPage" :page-size="pageSize"
+							layout="total, prev, pager, next, jumper" :total="total">
 						</el-pagination>
 					</div>
 				</view>
@@ -60,101 +52,43 @@
 			return {
 				menuActive: '3-4',
 				currentPage: 1,
-				tableData: [
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-					{
-						name: '杭州有意思测试有限公司',
-						p1: 123,
-						p2: 231,
-						time: '2021-12-22 14:44:26',
-						type: '现金',
-						status: '支付成功'
-					},
-				]
+				tableData: [],
+				pageSize: 20,
+				total: 0,
+				loading: false,
 			}
 		}, 
+		async onLoad() {
+			await this.getData()
+		},
 		computed: {
 			
 		},
 		methods: {
+			async getData() {
+				this.loading = true
+				let res = await this.$http.get('bill2', {
+					params: {
+						p: this.currentPage
+					}
+				})
+				this.loading = false
+				if(res.code != 1) return;
+				this.tableData = res.list.list;
+				this.pageSize = res.list.page_record;
+				this.total = res.list.pw_rec_total
+			},
+			async handleCurrentChange(p) {
+				this.currentPage = p;
+				this.getData()
+			}
 		}
 	}
 </script>
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

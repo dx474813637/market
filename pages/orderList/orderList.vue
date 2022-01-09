@@ -76,27 +76,21 @@
 							<el-table-column label="卖家" prop="c_name">
 							</el-table-column>
 							<el-table-column label="下单时间" prop="ctime" width="180px" align="right">
-								<!-- <template slot-scope="scope">
-									<view>{{scope.row.ctime.split(' ')[0]}}</view>
-									<view>{{scope.row.ctime.split(' ')[1]}}</view>
-								</template> -->
 							</el-table-column>
 							<el-table-column label="订立价" width="150px" align="right">
 								<template slot-scope="scope">
 									<view class="">{{scope.row.pay_price | toFixed2}} 元</view>
 								</template>
 							</el-table-column>
-							<el-table-column label="订单状态" prop="toState" width="120px" align="right">
+							<el-table-column label="订单状态" prop="toState" width="120px" align="center">
 							</el-table-column>
-							<el-table-column label="支付类型" prop="toPayType" width="100px" align="right">
+							<el-table-column label="支付类型" prop="toPayType" width="120px" align="center">
 								<template slot-scope="scope">
 									<view>{{scope.row.toTools}}</view>
 									<view>{{scope.row.toPayType}}</view>
 								</template>
 							</el-table-column>
-							<!-- <el-table-column label="支付状态" prop="toPayState" width="100px">
-							</el-table-column> -->
-							<el-table-column label="操作" width="120px" align="right">
+							<el-table-column label="操作" width="120px" align="center">
 								<template slot-scope="scope">
 									<navigator :url="`/pages/orderDetail/orderDetail?id=${scope.row.id}`">
 										<el-button type="text" >{{scope.row.toPayState}}</el-button>
@@ -138,7 +132,7 @@
 		async onLoad(opt) {
 			if(opt && opt.hasOwnProperty('type')) {
 				this.type = opt.type;
-				this.form.status = opt.form.status
+				this.form.status = this.type
 			}
 			await this.getData()
 			
@@ -229,7 +223,7 @@
 		}
 	}
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

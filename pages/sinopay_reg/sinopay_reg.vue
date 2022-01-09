@@ -9,7 +9,7 @@
 				<view class="wrap-item content">
 					<view class="content-header u-flex u-row-between u-border-bottom">
 						<view class="c-h-item u-flex">
-							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
+							<navigator url="/pages/money_center/money_center" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
 							<view class="header-title">注册支付平台（Sinopay）账号</view>
@@ -78,7 +78,30 @@
 											<el-input v-model="ruleForm.code"></el-input>
 										</el-col>
 										<el-col :offset="1" :span="7">
-											<el-button type="primary" plain class="getCode">获取验证码</el-button>
+											<el-button
+												type="primary" 
+												plain 
+												class="getCode" 
+												:disabled="SendMsgDisabled"
+												@click="handleSendCode()"
+											>
+												<template v-if="SendMsgDisabled">
+													<view class="u-flex">
+														<u-count-down
+															:time="time"
+															format="ss"
+															:autoStart="false"
+															ref="codeCountDown"
+															@finish="handleCountDownFinsh"
+														></u-count-down>
+														<text class="u-p-l-10">秒后再操作</text>
+													</view>
+													
+												</template>
+												<template v-else>
+													获取短信验证码
+												</template>
+											</el-button>
 										</el-col>
 									</el-row>
 								</el-row>
@@ -87,8 +110,8 @@
 							<el-form-item>
 								<view class="agree">
 									<el-checkbox v-model="checked">我已阅读并同意</el-checkbox>
-									<el-link :underline="false" href="" target="_blank">《平安银行电子商务“见证宝”商户服务协议》</el-link>
-									<el-link :underline="false" href="" target="_blank">《平安数字用户协议》</el-link>
+									<el-link :underline="false" href="https://my.orangebank.com.cn/orgLogin/hd/act/jianzb/jzbxy.html" target="_blank">《平安银行电子商务“见证宝”商户服务协议》</el-link>
+									<el-link :underline="false" href="https://auth.orangebank.com.cn/#/m/cDealOne" target="_blank">《平安数字用户协议》</el-link>
 								</view>
 								
 							</el-form-item>
@@ -128,6 +151,8 @@
 					code: '',
 					
 				},
+				time: 60*1000,
+				SendMsgDisabled: false,
 			}
 		},
 		watch: {
@@ -169,6 +194,37 @@
 					}
 				}
 				return rule
+			},
+			paramsObj() {
+				let params = {
+					phone: this.ruleForm.phone,
+					code: this.ruleForm.code,
+				}
+				if(this.typeForm.type == '1') {
+					params = {
+						...params,
+						name: this.ruleForm.name,
+						sfz: this.ruleForm.sfz,
+					}
+				}else if(this.typeForm.type == '2') {
+					params = {
+						...params,
+						name: this.ruleForm.name,
+						sfz: this.ruleForm.sfz,
+						cpyname: this.ruleForm.cpyname,
+						cpycode: this.ruleForm.cpycode,
+					}
+				}else if(this.typeForm.type == '3') {
+					params = {
+						...params,
+						name2: this.ruleForm.name2,
+						sfz2: this.ruleForm.sfz2,
+						cpyname2: this.ruleForm.cpyname2,
+						cpycode2: this.ruleForm.cpycode2,
+						contact: this.ruleForm.contact,
+					}
+				}
+				return params
 			}
 		},
 		onLoad() {
@@ -179,14 +235,64 @@
 				console.log(e)
 			},
 			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
+				if(!this.checked) {
+					this.$alert('请阅读并同意勾选用户协议', '提示', {
+					  confirmButtonText: '确定'
+					});
+					return
+				}
+				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						alert('submit!');
+						
+						let res = await this.$http.get('User/sinopay_create', {
+							params: this.params
+						})
+						if(res.code != 1) return;
+						this.$confirm(res.msg, '消息', {
+						  confirmButtonText: '开通资金账户',
+						  cancelButtonText: '返回资金中心',
+						  type: 'success'
+						}).then(() => {
+						  uni.navigateTo({
+						  	url: '/pages/money_center/money_center'
+						  })
+						}).catch(() => {
+						  uni.navigateTo({
+						  	url: '/pages/money_center/money_center'
+						  })      
+						});
+						
 					} else {
 						console.log('error submit!!');
 						return false;
 					}
 				});
+			},
+			async handleSendCode() {
+				if(this.SendMsgDisabled) return
+				
+				this.$refs.regForm.validateField('phone', async (errorMessage) => {
+					if(errorMessage) return
+					this.SendMsgDisabled = true;
+					this.$nextTick(() =>{
+						this.$refs.codeCountDown.start()
+					})
+					let res = await this.$http.get('User/get_mobile_code', {
+						params: {
+							mobile: this.ruleForm.phone
+						}
+					})
+					if(res.code != 1) return;
+					this.$message({
+						type: 'success',
+						message: '短信验证已发送'
+					});
+				})
+				
+			},			
+			handleCountDownFinsh() {
+				this.SendMsgDisabled = false;
+				this.$refs.codeCountDown.reset()
 			},
 		}
 	}
@@ -194,8 +300,17 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
-
+		 
+		.getCode {
+			display: block;
+			width: 100%;
+			.u-count-down {
+				/deep/ .u-count-down__text {
+					line-height: 1em;
+					color: inherit;
+				}
+			}
+		}
 		.wrap-item {
 			&.menu {
 				width: 180px;

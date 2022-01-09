@@ -12,26 +12,18 @@
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
-							<view class="header-title">我要充值</view>
+							<view class="header-title">提现申请</view>
 						</view>
 					</view>
 					<view class="form-wrap">
 						<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px">
-							<el-form-item label="充值账户" prop="czzh">
-								<el-input v-model="ruleForm.czzh" readonly></el-input>
-							</el-form-item>
-							<el-form-item label="充值类型" prop="czlx">
-								<el-select v-model="ruleForm.czlx" placeholder="请选择">
-									<el-option label="直接充值" value="1"></el-option>
-								</el-select>
-							</el-form-item>
-							<el-form-item label="选择充值卡" prop="card">
+							<el-form-item label="选择提现银行卡" prop="card">
 								<el-select v-model="ruleForm.card" placeholder="请选择">
 									<el-option label="银行卡1" value="1"></el-option>
 									<el-option label="银行卡2" value="2"></el-option>
 								</el-select>
 							</el-form-item>
-							<el-form-item label="充值金额" prop="money">
+							<el-form-item label="提现金额" prop="money">
 								<el-input v-model="ruleForm.money"></el-input>
 							</el-form-item>
 							<el-form-item label="手续费">
@@ -65,8 +57,6 @@
 				money2: 0,
 				money3: 0,
 				ruleForm: {
-					czzh: '123456',
-					czlx: '1',
 					card: '',
 					money: 0,
 					bz: '',
@@ -107,7 +97,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

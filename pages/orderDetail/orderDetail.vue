@@ -841,7 +841,7 @@
 		}
 	}
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

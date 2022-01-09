@@ -18,7 +18,9 @@
 								<view class="sinopay-label">Sinopay账号</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">SUNSIRS_skt123</view>
+								<view class="sinopay-info">
+									{{sinopay.bind_info.sinopay_login}}
+								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -26,7 +28,14 @@
 								<view class="sinopay-label">用户类型账号</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">个人</view>
+								<view class="sinopay-info">
+									<template v-if="sinopay.sinop_type == 'C'">
+										个人
+									</template>
+									<template v-else>
+										企业
+									</template>
+								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -34,7 +43,7 @@
 								<view class="sinopay-label">用户名称</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">沈凯婷</view>
+								<view class="sinopay-info">{{sinopay.name}}</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -42,10 +51,25 @@
 								<view class="sinopay-label">认证状态</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">已认证</view>
+								<view class="sinopay-info">
+									<template v-if="sinopay.auth_state == 1">
+										已认证
+									</template>
+									<template v-else>
+										未认证
+									</template>
+								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
+							<el-col :span="5" class="sinopay-label-col">
+								<view class="sinopay-label">绑定操作时间</view>
+							</el-col>
+							<el-col>
+								<view class="sinopay-info">{{sinopay.bind_info.ctime}}</view>
+							</el-col>
+						</el-row>
+						<!-- <el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">登录密码</view>
 							</el-col>
@@ -85,14 +109,6 @@
 						</el-row>
 						<el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
-								<view class="sinopay-label">绑定操作时间</view>
-							</el-col>
-							<el-col>
-								<view class="sinopay-info">2021-01-20 16:00:57</view>
-							</el-col>
-						</el-row>
-						<el-row type="flex" align="middle">
-							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">操作</view>
 							</el-col>
 							<el-col>
@@ -117,7 +133,7 @@
 									</navigator>
 								</view>
 							</el-col>
-						</el-row>
+						</el-row> -->
 					</view>
 				</view>
 			</view>
@@ -127,6 +143,7 @@
 </template>
 
 <script>
+	import {mapState, mapActions} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -134,9 +151,14 @@
 			}
 		}, 
 		computed: {
-			
+			...mapState(['sinopay'])
+		},
+		async onLoad() {
+			uni.showLoading()
+			await this.getSinopay()
 		},
 		methods: {
+			...mapActions(['getSinopay']),
 			handleTakeAccount() {
 				this.$confirm('是否开通支付平台向下的资金账户?', '提示', {
 				  confirmButtonText: '确定',
@@ -156,7 +178,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

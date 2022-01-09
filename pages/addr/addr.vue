@@ -11,6 +11,14 @@
 						<view class="c-h-item u-flex">
 							<view class="header-title">收货地址列表</view>
 						</view>
+						<view class="c-h-item u-flex">
+							<template v-if="preOrderConfirm == 1">
+								<navigator open-type="navigateBack">
+									<el-button type="danger" size="mini" icon="el-icon-link">有一个订单待确认创建，返回确认</el-button>
+								</navigator>
+								
+							</template>
+						</view>
 					</view>
 					<view class="u-p-30 u-p-l-60">
 						<el-button type="primary" plain size="medium" @click="handleShowAddBox">新增地址</el-button>
@@ -145,10 +153,12 @@
 						trigger: ['blur', 'change']
 					}],
 				},
-				dataList: []
+				dataList: [],
+				preOrderConfirm: 0,
 			}
 		},
 		async onLoad() {
+			this.checkPrePage()
 			uni.showLoading()
 			await this.getData()
 			await this.checkReginalData()
@@ -162,6 +172,21 @@
 		},
 		methods: {
 			...mapActions(['checkReginalData']),
+			checkPrePage() {
+				let pages = getCurrentPages().map(ele => {
+					return ele.route
+				})
+				if(pages[pages.length - 2].includes('orderConfirm')) {
+					this.preOrderConfirm = 1
+				}
+				// #ifdef APP-NVUE
+				const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
+				// #endif
+				// #ifndef APP-NVUE
+				const eventChannel = this.getOpenerEventChannel();
+				// #endif
+				eventChannel.emit('bindEvent');
+			},
 			async getData() {
 				let res = await this.$http.get('address')
 				if(res.code != 1) return;
@@ -283,7 +308,7 @@
 	}
 
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

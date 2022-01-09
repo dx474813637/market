@@ -14,47 +14,32 @@
 					</view>
 					<view class="form-wrap">
 						<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-							<el-form-item label="会员类型" prop="memberCate">
+							<!-- <el-form-item label="会员类型" prop="memberCate">
 								<el-input v-model="ruleForm.memberCate" readonly></el-input>
 							</el-form-item>
 							<el-form-item label="您的账号" prop="login">
 								<el-input v-model="ruleForm.login" readonly></el-input>
-							</el-form-item>
+							</el-form-item> -->
 							<el-form-item label="您的姓名" prop="name">
 								<el-input v-model="ruleForm.name"></el-input>
-							</el-form-item>
-							<el-form-item label="邮箱" prop="email">
-								<el-input v-model="ruleForm.email"></el-input>
 							</el-form-item>
 							<el-form-item label="手机" prop="phone">
 								<el-input v-model="ruleForm.phone"></el-input>
 							</el-form-item>
-							<el-form-item label="性别" prop="sex">
-								<el-radio-group v-model="ruleForm.sex">
-									<el-radio label="1">男</el-radio>
-									<el-radio label="0">女</el-radio>
-								</el-radio-group>
+							<el-form-item label="邮箱" prop="email">
+								<el-input v-model="ruleForm.email"></el-input>
 							</el-form-item>
-							<el-form-item label="下拉框样例" prop="region">
-								<el-select v-model="ruleForm.region" placeholder="请选择活动区域">
-									<el-option label="区域一" value="shanghai"></el-option>
-									<el-option label="区域二" value="beijing"></el-option>
-								</el-select>
+							<el-form-item label="公司" prop="company">
+								<el-input v-model="ruleForm.company"></el-input>
 							</el-form-item>
-							
-							<el-form-item label="开关样例" prop="delivery">
-								<el-switch v-model="ruleForm.delivery"></el-switch>
+							<el-form-item label="公司地址" prop="address">
+								<el-input v-model="ruleForm.address"></el-input>
 							</el-form-item>
-							<el-form-item label="多选样例" prop="type">
-								<el-checkbox-group v-model="ruleForm.type">
-									<el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-									<el-checkbox label="地推活动" name="type"></el-checkbox>
-									<el-checkbox label="线下主题活动" name="type"></el-checkbox>
-									<el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
-								</el-checkbox-group>
+							<el-form-item label="职位" prop="position">
+								<el-input v-model="ruleForm.position"></el-input>
 							</el-form-item>
-							<el-form-item label="富文本样例" prop="desc">
-								<el-input type="textarea" v-model="ruleForm.desc"></el-input>
+							<el-form-item label="电话" prop="tel">
+								<el-input v-model="ruleForm.tel"></el-input>
 							</el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -70,23 +55,21 @@
 </template>
 
 <script>
+	import { mapActions, mapState } from 'vuex'
 	export default {
 		data() {
 			return {
 				menuActive: "1-2",
 				ruleForm: {
-					memberCate: '超级会员',
-					login: 'huiyuannetsun',
+					// memberCate: '超级会员',
+					// login: 'huiyuannetsun',
 					name: '',
-					phone: '18757127948',
-					email: '456@email.com',
-					region: '',
-					date1: '',
-					date2: '',
-					delivery: false,
-					type: [],
-					sex: '1',
-					desc: ''
+					phone: '',
+					email: '',
+					company: '',
+					tel: '',
+					position: '',
+					address: '',
 				},
 				rules: {
 					name: [{
@@ -102,43 +85,42 @@
 							trigger: 'blur'
 						},
 					],
-					email: [{
-						required: true,
-						message: '请输入您的邮箱',
-						trigger: 'blur'
-					}],
-					region: [{
-						required: true,
-						message: '请选择活动区域',
-						trigger: 'change'
-					}],
-					type: [{
-						type: 'array',
-						required: true,
-						message: '请至少选择一个活动性质',
-						trigger: 'change'
-					}],
-					sex: [{
-						required: true,
-						message: '请选择活动资源',
-						trigger: 'change'
-					}],
-					desc: [{
-						required: true,
-						message: '请填写活动形式',
-						trigger: 'blur'
-					}]
 				}
 			}
 		},
-		onLoad() {
-
+		async onLoad() {
+			uni.showLoading()
+			await this.getUserInfo()
+			this.getData()
+		},
+		computed: {
+			...mapState(['user'])
 		},
 		methods: {
+			...mapActions(['getUserInfo']),
+			getData() {
+				// this.ruleForm.memberCate = this.user.state;
+				// this.ruleForm.login = this.user.login;
+				this.ruleForm.name = this.user.name;
+				this.ruleForm.email = this.user.email;
+				this.ruleForm.phone = this.user.phone;
+				this.ruleForm.company = this.user.company;
+				this.ruleForm.tel = this.user.tel;
+				this.ruleForm.position = this.user.position;
+				this.ruleForm.address = this.user.address;
+			},
 			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
+				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						alert('submit!');
+						let res = await this.$http.get('User/edit_card', {
+							params: this.ruleForm
+						})
+						if(res.code != 1) return;
+						this.$message({
+							type: 'success',
+							message: res.msg || '成功'
+						});
+						await this.getUserInfo()
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -151,7 +133,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

@@ -116,7 +116,7 @@
 					<view class="content-btns-wrap u-flex">
 						<el-button type="primary" class="u-m-r-40" @click="editOutlineInfo">编辑线下还款信息</el-button>
 						<el-button type="primary" @click="onlinePay">在线还款</el-button>
-					
+						
 					</view>
 				</view>
 			</view>
@@ -131,6 +131,28 @@
 		  <view slot="footer" class="dialog-footer">
 			<el-button type="primary" @click="submitForm('payPwd')">确定</el-button>
 		  </view>
+		</el-dialog>
+		
+		<el-dialog title="编辑线下还款信息表单" :visible.sync="outlineFormDialog" width="40%">
+		  <el-form ref="outform" :model="outlineform" :rules="outlineRules" label-width="80px">
+		    <el-form-item label="还款信息" prop="content">
+		      <el-input v-model="outlineform.content" autocomplete="off"></el-input>
+		    </el-form-item>
+		    <el-form-item label="图片">
+				<u-upload
+					:fileList="fileList1"
+					@afterRead="afterRead"
+					@delete="deletePic"
+					name="uploadImg"
+					:maxCount="1"
+					ref="uploadImg"
+				></u-upload>
+		    </el-form-item>
+		  </el-form>
+		  <div slot="footer" class="dialog-footer">
+		    <el-button @click="outlineFormDialog = false">取 消</el-button>
+		    <el-button type="primary" @click="submitForm('outform')">确 定</el-button>
+		  </div>
 		</el-dialog>
 	</view>
 </template>
@@ -153,7 +175,16 @@
 						}
 					]
 				},
-				info: {}
+				info: {},
+				outlineFormDialog:false,
+				fileList1: [],
+				outlineform: {
+					pic: '',
+					content: '',
+				},
+				outlineRules: {
+					content: [{ required: true, message: '还款信息不能为空', trigger: ['change'] }]
+				}
 			}
 		}, 
 		async onLoad(opt) {
@@ -168,6 +199,23 @@
 			
 		},
 		methods: {
+			afterRead(e) {
+				console.log(e.file)
+				if (window.FileReader) {
+					var reader = new FileReader();                        
+					reader.readAsDataURL(e.file.thumb); 
+						 
+					 reader.onload = () => {
+						 console.log(reader.result)
+						 this.outlineform.pic = reader.result
+					 }
+				}else {
+					alert("浏览器版本不兼容");
+				}
+			},
+			deletePic(event) {
+				
+			},
 			async getData() {
 				let data = await this.$http.get('credit_detail', {
 					params: {
@@ -176,34 +224,61 @@
 				})
 				if(data.code != 1) return
 				this.info = data.list
+				this.outlineform.content = this.info.credit_offline.content
 				this.$message({
 					type: 'success',
 					message: '数据加载完成!'
 				});
 			},
 			editOutlineInfo() {
-				
+				this.outlineFormDialog = true
 			},
 			onlinePay() {
 				this.pwdFormDialog = true
 			},
+			async handleOnline() {
+				let res = await this.$http.get('User/repayment', {params: {
+					id: this.order_id,
+					pay_passwd: this.payPwdForm.pwd
+				}})
+				if(res.code != 1) return;
+				this.pwdFormDialog = false
+				this.$message({
+					type: 'success',
+					message: '在线还款成功'
+				});
+				uni.showLoading({
+					title: '获取最新数据中'
+				})
+				await this.getData()
+			},
+			async handleOutLine() {
+				let res = await this.$http.get('offline_change', {params: {
+					id: this.info.order_id,
+					content: this.outlineform.content,
+					pic: '' 
+				}})
+				if(res.code != 1) return;
+				this.outlineFormDialog = false
+				this.$message({
+					type: 'success',
+					message: '提交线下还款表单成功'
+				});
+				uni.showLoading({
+					title: '获取最新数据中'
+				})
+				await this.getData()
+			},
 			submitForm(formName) {
 				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						let res = await this.$http.get('User/repayment', {params: {
-							id: this.id,
-							pay_passwd: this.payPwdForm.pwd
-						}})
-						if(res.code != 1) return;
-						this.pwdFormDialog = false
-						this.$message({
-							type: 'success',
-							message: '在线还款成功'
-						});
-						uni.showLoading({
-							title: '获取最新数据中'
-						})
-						await this.getData()
+						
+						if(formName == 'payPwdForm') {
+							await this.handleOnline()
+						}else if(formName == 'outform') {
+							await this.handleOutLine()
+						}
+						
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -216,7 +291,7 @@
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 		.wrap-item {
 			&.menu {
 				width: 180px;

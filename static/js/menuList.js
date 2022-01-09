@@ -21,14 +21,14 @@ export default [
 				active: 'info',
 				index: '1-2',
 			},
-			{
-				label: '账号安全',
-				type: 'link-navigator',
-				url: '/pages/memberSafe/memberSafe',
-				icon: '',
-				active: 'safe',
-				index: '1-3',
-			},
+			// {
+			// 	label: '账号安全',
+			// 	type: 'link-navigator',
+			// 	url: '/pages/memberSafe/memberSafe',
+			// 	icon: '',
+			// 	active: 'safe',
+			// 	index: '1-3',
+			// },
 			// {
 			// 	label: '登录明细',
 			// 	type: 'link-navigator',

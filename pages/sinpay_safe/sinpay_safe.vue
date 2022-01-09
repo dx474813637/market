@@ -9,7 +9,7 @@
 				<view class="wrap-item content">
 					<view class="content-header u-flex u-row-between u-border-bottom">
 						<view class="c-h-item u-flex">
-							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
+							<navigator url="/pages/money_center/money_center" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
 							<view class="header-title">Sinopay安全设置</view>
@@ -50,9 +50,10 @@
 							</el-col>
 							<el-col :span="3">
 								<view class="u-flex u-row-right">
-									<navigator url="/pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd">
-										<el-button type="primary" size="small"><i class="el-icon-edit"></i></el-button>
-									</navigator>
+									<el-button type="primary" size="small" @click="handleSetOrUpdate">
+										<i class="el-icon-edit"></i>
+									</el-button>
+									
 								</view>
 							</el-col>
 						</el-row>
@@ -86,24 +87,40 @@
 </template>
 
 <script>
+	import {mapState, mapActions} from 'vuex';
 	export default {
 		data() {
 			return {
 				menuActive: '3-1'
 			}
 		},
-		onLoad() {
-
+		computed: {
+			...mapState(['sinopay']),
+		},
+		async onLoad() {
+			uni.showLoading()
+			await this.getSinopay()
 		},
 		methods: {
-
+			...mapActions(['getSinopay']),
+			handleSetOrUpdate() {
+				if(this.sinopay.sinopay_pay_pass == 1) {
+					uni.navigateTo({
+						url: '/pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd?type=update'
+					})
+				} else {
+					uni.navigateTo({
+						url: '/pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd?type=set'
+					})
+				}
+			}
 		}
 	}
 </script>
 
 <style scoped lang="scss">
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {
@@ -146,6 +163,9 @@
 					padding: 40px 30px;
 
 					.row {
+						&:hover {
+							background-color: #f8f8f8;
+						}
 						.value {
 							color: #999;
 						}

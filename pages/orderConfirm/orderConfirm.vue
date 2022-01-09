@@ -12,7 +12,8 @@
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
-							<view class="header-title">创建订单</view>
+							<view class="header-title u-m-r-80">创建订单</view>
+							<el-button v-if="company.name" type="primary" size="mini" icon="el-icon-shopping-bag-1">店铺：{{company.name}}</el-button>
 						</view>
 					</view>
 					<view class="content-form-wrap">
@@ -20,13 +21,13 @@
 							<el-form-item label="支付方式" class="u-m-b-0">
 								<el-select v-model="confirmOrder.pay_type">
 									<el-option label="现金" value="1"></el-option>
-									<el-option label="赊账" value="2"></el-option>
+									<el-option :disabled="sz != 1" label="赊账" value="2"></el-option>
 								</el-select>
 							</el-form-item>
 							<el-form-item label="交收方式" class="u-m-b-0">
 								<el-select v-model="confirmOrder.receive_type">
-									<el-option label="送货" value="1"></el-option>
-									<el-option v-if="ziti == 0" label="自提" value="2"></el-option>
+									<el-option :disabled="list1.length == 0" label="送货" value="1"></el-option>
+									<el-option :disabled="ziti == 1" label="自提" value="2"></el-option>
 								</el-select>
 							</el-form-item>
 						</el-form>
@@ -36,12 +37,12 @@
 							<view class="letter-border">
 								<view class="u-flex u-p-b-20">
 									<view class="item-left u-m-r-40 u-flex ">
-										<view class="default-label u-m-r-10" v-if="addressData.auto">默认</view>
+										<view class="default-label u-m-r-10" v-if="addressData.auto == 1">默认</view>
 										<view class="name u-m-r-20">{{addressData.name}}</view>
 										<view class="mobile">{{addressData.mobile}}</view>
 									</view>
 									<view class="item-right">
-										<el-button class="u-p-0" type="text" @click="addrTableDialog = true">
+										<el-button class="u-p-0" type="text" @click="handleShowAddrBox">
 											<view class="u-flex">
 												选择其他地址<i class="custom-icon-right-circle custom-icon u-p-l-10"></i>
 											</view>
@@ -197,7 +198,7 @@
 		</view>
 
 		<el-dialog class="addr-table" title="收货地址列表" :visible.sync="addrTableDialog" width="70%">
-			<el-table height="400" :data="addrList" ref="addrTable" highlight-current-row
+			<el-table height="400" :data="addrList" ref="addrTable" highlight-current-row v-loading="addrLoading"
 				@current-change="handleCurrentChange">
 				<!-- <el-table-column property="id" label="id" width="150"></el-table-column> -->
 				<el-table-column label="收货人" width="150">
@@ -217,7 +218,10 @@
 			</el-table>
 			<span slot="footer" class="dialog-footer">
 				<!-- <span class="footer-sub d-theme-color u-p-r-60" style="font-size: 14px;">{{curTableCoupon}}</span> -->
-				<el-button @click="addrTableDialog = false">取 消</el-button>
+				
+				<!-- <el-button type="primary" @click="handleRefreshData" icon="el-icon-refresh" plain>刷新数据</el-button> -->
+				<el-button type="primary" @click="handleAddrAddmin" icon="el-icon-setting" plain>管理收获地址</el-button>
+				<el-button type="danger" @click="addrTableDialog = false">取 消</el-button>
 				<el-button type="primary" @click="handleConfirmAddr">确 定</el-button>
 			</span>
 		</el-dialog>
@@ -236,85 +240,25 @@
 				list1: [],
 				list2: [],
 				ziti: 0,
+				sz: 1,
+				company: {},
 				addrTableDialog: false,
 				confirmOrder: {
 					pay_type: '1',
 					receive_type: '1'
 				},
 				addressData: {
-					name: '张三',
-					mobile: '18757125555',
-					address: '文三街道456号电子商务写字楼12楼',
-					regional_name: '浙江省杭州市西湖区',
-					auto: 1,
+					id: '',
+					name: '',
+					mobile: '',
+					address: '',
+					regional_name: '',
+					auto: 0,
 				},
+				addrLoading: false,
 				currentRow: {},
 				checkedList: [],
-				addrList: [{
-						address: "莫干山路187易盛大厦12楼",
-						auto: 1,
-						ctime: "2021-11-22 09:22:24",
-						id: 5124,
-						login: "sktsyh",
-						mobile: 135882221234,
-						name: "张三",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11330106,
-						regional_name: "浙江省杭州市西湖区",
-						remark: "",
-						tags: "",
-					},
-					{
-						address: "扣图路柯南秀露琪亚动漫展扣图路柯南秀露琪亚动漫展扣图路柯南秀露琪亚动漫展",
-						auto: 0,
-						ctime: "2021-11-19 09:15:35",
-						id: 508,
-						login: "sktsyh",
-						mobile: 12345678984,
-						name: "sky",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11130102,
-						regional_name: "河北省石家庄市长安区",
-						remark: "",
-						tags: "",
-					},
-					{
-						address: "扣图路柯南秀露琪亚动漫展",
-						auto: 0,
-						ctime: "2021-11-19 09:15:35",
-						id: 108,
-						login: "sktsyh",
-						mobile: 12345678984,
-						name: "sky",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11130102,
-						regional_name: "河北省石家庄市长安区",
-						remark: "",
-						tags: "",
-					},
-					{
-						address: "扣图路柯南秀露琪亚动漫展",
-						auto: 0,
-						ctime: "2021-11-19 09:15:35",
-						id: 308,
-						login: "sktsyh",
-						mobile: 12345678984,
-						name: "sky",
-						post_ip: "",
-						post_time: "2021-12-06 14:07:56",
-						poster_id: "sktsyh",
-						regional: 11130102,
-						regional_name: "河北省石家庄市长安区",
-						remark: "",
-						tags: "",
-					}
-				]
+				addrList: []
 			}
 		},
 		computed: {
@@ -336,11 +280,20 @@
 				return total
 			},
 		},
-		onLoad() {
+		async onLoad() {
 			this.filterListData()
+			uni.showLoading()
+			await this.getData()
+		},
+		onShow() {
+			uni.$emit('updateAddrPage')
 		},
 		methods: {
 			...mapMutations(['updateCartList']),
+			handleShowAddrBox() {
+				this.addrTableDialog = true;
+				this.currentRow = this.addressData
+			},
 			filterListData() {
 				let list1 = []
 				let list2 = []
@@ -358,6 +311,39 @@
 				})
 				this.list1 = list1
 				this.list2 = list2
+				if(this.list1.length == 0) {
+					this.confirmOrder.receive_type = '2'
+					this.addressData.id = -1
+				}
+			},
+			async handleRefreshData() {
+				this.addrLoading = true;
+				this.addrList = []
+				await this.getData()
+				this.addrLoading = false;
+				this.$refs.addrTable.doLayout()
+				
+			},
+			async getData() {
+				let res = await this.$http.get('orderConfirm')
+				if(res.code != 1) return;
+				this.company = res.company.Company
+				if(!this.addressData.id) {
+					if(this.list1.length == 0) this.addressData = res.moren 
+					// this.currentRow = res.moren 
+				}else if(res.moren.id != this.addressData.id){
+					this.addressData.auto = 0
+					// this.currentRow.auto = 0
+				}else {
+					this.addressData.auto = 1
+					// this.currentRow.auto = 1
+				}
+				this.addrList = res.list
+				this.sz = res.sz
+				this.$message({
+					type: 'success',
+					message: '数据加载完成!'
+				});
 			},
 			handleCurrentChange(val) {
 				this.currentRow = val;
@@ -368,19 +354,51 @@
 					this.addrTableDialog = false
 				}
 			},
-			handleCreateOrder() {
+			handleAddrAddmin() {
+				this.addrTableDialog = false
+				uni.navigateTo({
+					url: '/pages/addr/addr',
+					events: {
+						bindEvent: () => {
+							uni.$once('updateAddrPage',(data) => {
+								this.handleRefreshData()
+							})
+						}
+					}
+				})
+			},
+			async handleCreateOrder() {
+				let pid_array = []
+				this.cart.forEach(item => {
+					if(item.checked) {
+						pid_array.push({
+							cid:item.cid,
+							pid:item.id,
+							num:item.num
+						})
+					}
+				})
+				let res = await this.$http.get('User/ordercreate', {
+					params: {
+						pid_array: JSON.stringify(pid_array),
+						buy_address_id: this.addressData.id,
+						pay_tool: this.confirmOrder.pay_type
+					}
+				})
+				if(res.code != 1) return;
+				
 				
 				this.updateCartList({
 					action: 'delete',
-					idArr: this.cart.filter(item => item.checked).map(ele => ele.id),
+					idArr: pid_array.map(ele => ele.pid),
 				})
 				this.$confirm('订单创建成功！', '消息', {
-					confirmButtonText: '查看订单详情',
+					confirmButtonText: '跳至订单管理',
 					cancelButtonText: '回到购物车',
 					type: 'success'
 				}).then(() => {
 					uni.redirectTo({
-						url: `/pages/orderDetail/orderDetail`
+						url: `/pages/orderList/orderList`
 					})
 				}).catch(() => {
 					uni.redirectTo({
@@ -394,7 +412,6 @@
 
 <style scoped lang="scss">
 	$p-img-w: 70px !default;
-
 	.default-label {
 		font-size: 12px;
 		color: #fff;
@@ -407,7 +424,7 @@
 	}
 
 	.wrapper {
-		width: 1300px;
+		 
 
 		.wrap-item {
 			&.menu {

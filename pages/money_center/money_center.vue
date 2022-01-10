@@ -61,15 +61,42 @@
 									<view class="item-left u-flex">
 										<view class="money-view u-flex u-row-around">
 											<view class="m-v-item u-flex">
-												<view class="num">{{walletInfo.info.bal}}</view>
+												<view class="num">
+													<u-count-to 
+														:endVal="walletInfo.info.bal" 
+														separator="," 
+														:decimals="2" 
+														:duration="1200"
+														fontSize="30"
+													></u-count-to>
+													<!-- {{walletInfo.info.bal}} -->
+												</view>
 												<view class="t">可用余额（元）</view>
 											</view>
 											<view class="m-v-item u-flex">
-												<view class="num">{{walletInfo.info.bal_freeze}}</view>
+												<view class="num">
+													<u-count-to 
+														:endVal="walletInfo.info.bal_freeze" 
+														separator="," 
+														:decimals="2" 
+														:duration="1200"
+														fontSize="30"
+													></u-count-to>
+													<!-- {{walletInfo.info.bal_freeze}} -->
+												</view>
 												<view class="t">冻结金额（元）</view>
 											</view>
 											<view class="m-v-item u-flex">
-												<view class="num">{{walletInfo.info.bal_refund}}</view>
+												<view class="num">
+													<u-count-to 
+														:endVal="walletInfo.info.bal_refund" 
+														separator="," 
+														:decimals="2" 
+														:duration="1200"
+														fontSize="30"
+													></u-count-to>
+													<!-- {{walletInfo.info.bal_refund}} -->
+												</view>
 												<view class="t">可提金额（元）</view>
 											</view>
 										</view>

@@ -3,7 +3,7 @@
 		<view class="header-wrap u-flex u-row-between">
 			<view class="item item-left">
 				<a href="https://www.baidu.com">
-					<image class="logo" src="../../static/img/logofoot.svg" mode="heightFix"></image>
+					<image class="logo" :src="index_info.logo" mode="heightFix"></image>
 				</a>
 			</view>
 			<view class="item item-center">
@@ -73,7 +73,7 @@
 			};
 		},
 		computed: {
-			...mapState(['cart', 'user']),
+			...mapState(['cart', 'user', 'index_info']),
 			...mapGetters(['cartNumTotal'])
 		},
 		onLoad() {
@@ -96,6 +96,7 @@
 	.header {
 		height: 70px;
 		background-color: #fff;
+		padding: 0 20px;
 		// padding: 0 20px;
 		box-shadow: 0 0 10px rgba(0,0,0,.1);
 		// border: 1rpx solid #f8f8f8;
@@ -111,7 +112,7 @@
 			width: 400px;
 		}
 		.logo {
-			height: 40px;
+			height: 48px;
 		}
 		.search-btn {
 			border-top-left-radius: 0;

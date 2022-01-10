@@ -46,7 +46,16 @@
 							</el-col>
 							<el-col>
 								<view class="sinopay-info u-flex">
-									<view>{{info.info.bal}}</view>
+									<view>
+										<u-count-to
+											:endVal="info.info.bal" 
+											separator="," 
+											:decimals="2" 
+											:duration="1200"
+											fontSize="14"
+											color="#000"
+										></u-count-to>
+									</view>
 									<!-- <navigator url="/pages/recharge/recharge" class="u-m-l-40">
 										<el-button type="primary" size="mini">提现</el-button>
 									</navigator> -->
@@ -62,7 +71,17 @@
 								<view class="sinopay-label">可提余额</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">{{info.info.bal_refund}}</view>
+								<view class="sinopay-info">
+								
+									<u-count-to
+										:endVal="info.info.bal_refund" 
+										separator="," 
+										:decimals="2" 
+										:duration="1200"
+										fontSize="14"
+										color="#000"
+									></u-count-to>
+								</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">
@@ -70,7 +89,16 @@
 								<view class="sinopay-label">冻结金额</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">{{info.info.bal_freeze}}</view>
+								<view class="sinopay-info">
+									<u-count-to
+										:endVal="info.info.bal_freeze" 
+										separator="," 
+										:decimals="2" 
+										:duration="1200"
+										fontSize="14"
+										color="#000"
+									></u-count-to>
+								</view>
 							</el-col>
 						</el-row>
 						<!-- <el-row type="flex" align="middle">

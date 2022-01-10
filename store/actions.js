@@ -2,6 +2,12 @@ import Vue from 'vue'
 import {http} from '@/common/service.js'
 
 export const actions = {
+	async getIndexInfo({ commit, state }) {
+		let res = await http.get('User/index_info')
+		if(res.code != 1) return
+		commit('updateIndexInfo', res.list)
+		uni.setStorageSync('index_info', res.list)
+	},
 	async checkeIsLimit({ commit, dispatch, state }) {
 		if(state.sinopayLimit == -1) {
 			await dispatch('getSinopayLimit')
@@ -13,19 +19,19 @@ export const actions = {
 		}
 	},
 	async getSinopayLimit({ commit, state }) {
-		let res = await http.get('moneyCenter3')
+		let res = await http.get('User/moneyCenter3')
 		if(res.code != 1) return
 		commit('updateSinopay', res.list)
 		commit('updateSinopayLimit', res.State)
 	},
 	async getSinopay({ commit, state }) {
-		let res = await http.get('sino_info')
+		let res = await http.get('User/sino_info')
 		if(res.code != 1) return
 		commit('updateSinopay', res.list)
 	},
 	async checkReginalData({ commit, state }) {
 		if(state.reginal_list.length == 0) {
-			let res = await http.get('addressDetail')
+			let res = await http.get('User/addressDetail')
 			if(res.code != 1) return;
 			commit('updateReginalData', JSON.parse(res.regional_list))
 		}
@@ -42,7 +48,7 @@ export const actions = {
 		uni.setStorageSync('market_user', res.list)
 	},
 	async getUserInfoApi() {
-		return await http.get('memberInfo')
+		return await http.get('User/memberInfo')
 	}
 	
 }

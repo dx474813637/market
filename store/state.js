@@ -5,6 +5,7 @@ setCartData()
 export const state = {
 	menuList,
 	menuActive: '',
+	index_info: uni.getStorageSync('index_info'),
 	cart: uni.getStorageSync('cart') || [],
 	reginal_list: [],
 	user: uni.getStorageSync('market_user') || {},

@@ -17,6 +17,9 @@ export const mutations = {
 	updateUserInfo(state, info) {
 		state.user = info
 	},
+	updateIndexInfo(state, info) {
+		state.index_info = info
+	},
 	updateCartList(state, data) {
 		if(data.action == 'clearAll') {
 			state.cart = [];

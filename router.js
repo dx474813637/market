@@ -15,6 +15,9 @@ let noCheckArr = [
 ]
 router.beforeEach(async (to, from, next) => {
 	let model = to.name.split('__')[0]
+	if(!store.state.index_info) {
+		store.dispatch('getIndexInfo')
+	}
 	if( model == 'sinopay' && !noCheckArr.includes(to.name)) {
 		if(store.state.sinopayLimit == -1) {
 			let loadingInstance = Loading.service({

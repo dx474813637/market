@@ -144,7 +144,12 @@
 												v-for="item in card_list" 
 												:key="item.id"
 											>
-												<d-bank-card :cardNum="item.bank_accno" :bankName="item.bank_name"></d-bank-card>
+												<d-bank-card 
+													:cardNum="item.bank_accno" 
+													:bankName="item.bank_name"
+													:cate="item.bank_cate"
+													:css="item.css"
+												></d-bank-card>
 											</navigator>
 											
 										</view>
@@ -235,12 +240,16 @@
 					}),
 				
 				])
-				let res1 = res[0].list ? res[0].list.list : []
-				let res2 = res[1].list
+				let res1 = res[0]?.list?.list ?? []
+				let res2 = res[1]?.list?.list ?? [];
+				res2.forEach((ele) => {
+					ele.bank_cate = 2
+				})
 				this.card_list = [
 					...res1,
 					...res2,
 				];
+				
 				this.card_loading = false
 			},
 			handleChangeFlag() {

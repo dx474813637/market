@@ -15,8 +15,19 @@
 						<span class="menu-title" slot="title">{{item.label}}</span>
 					</template>
 					<el-menu-item v-for="ele in item.children" :index="ele.index" :key="ele.index">
-						<i class="custom-icon" :class="ele.icon" v-if="ele.icon" ></i>
-						<span slot="title">{{ele.label}}</span>
+						
+						<!-- <i class="custom-icon" :class="ele.icon" v-if="ele.icon" ></i>
+						<span slot="title">{{ele.label}}</span> -->
+						
+						<view class="u-flex u-row-between" slot="title">
+							<view class="item-left">
+								<i class="custom-icon" :class="ele.icon" v-if="ele.icon" ></i>
+								<span>{{ele.label}}</span>
+							</view>
+							<view class="item-right">
+								<text class="num" v-if="ele.active == 'cart'">{{cartNumTotal}}</text>
+							</view>
+						</view>
 					</el-menu-item>
 				</el-submenu>
 				<el-menu-item v-else :index="item.index" :key="item.index">
@@ -30,7 +41,7 @@
 
 <script>
 	import {
-		mapState, mapMutations
+		mapState, mapMutations, mapGetters
 	} from 'vuex'
 	export default {
 		name: "d-menu",
@@ -48,6 +59,10 @@
 			return {
 				isCollapse: false,
 			};
+		},
+		computed: {
+			...mapState(['menuList', 'menuActive']),
+			...mapGetters(['cartNumTotal']),
 		},
 		methods: {
 			...mapMutations(['updatemenuActive']),
@@ -76,13 +91,22 @@
 				}
 			},
 		},
-		computed: {
-			...mapState(['menuList', 'menuActive'])
-		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	.num {
+		transition: all .3s;
+		background-color: #ed2c2c;
+		color: #fff;
+		border-radius: 20px;
+		min-width: 20px;
+		height: 20px;
+		font-size: 12px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 	.menu-title {
 		font-weight: bold;
 		font-size: 15px;

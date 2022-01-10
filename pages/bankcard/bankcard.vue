@@ -34,7 +34,11 @@
 								v-for="item in cardList" 
 								:key="item.id"
 							>
-								<d-bank-card :cardNum="item.bank_accno" :bankName="item.bank_name"></d-bank-card>
+								<d-bank-card 
+									:cardNum="item.bank_accno" 
+									:bankName="item.bank_name"
+									:css="item.css"
+								></d-bank-card>
 							</navigator>
 							<template v-if="!cardList || cardList.length == 0">
 								<el-empty description="无数据"></el-empty>

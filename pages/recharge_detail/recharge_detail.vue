@@ -29,7 +29,7 @@
 								<view class="sinopay-label">充值银行卡</view>
 							</el-col>
 							<el-col>
-								<view class="sinopay-info">{{list.card.accNo}}</view>
+								<view class="sinopay-info">{{list.card.plantBankName}}（{{list.card.accNo}}）</view>
 							</el-col>
 						</el-row>
 						<el-row type="flex" align="middle">

@@ -33,7 +33,7 @@
 								<el-select v-model="ruleForm.card" placeholder="请选择">
 									<el-option
 										v-for="(item,index) in list"
-										:label="`${item.bank_name}（${item.accNo}）`" 
+										:label="`${item.plantBankName}（${item.accNo}）`" 
 										:value="item.id"
 										:key="item.id"
 									></el-option>
@@ -215,6 +215,7 @@
 			submitForm(formName) {
 				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
+						uni.showLoading()
 						if(formName == 'ruleForm') {
 							this.handleRecharge()
 						}else if(formName == 'code') {

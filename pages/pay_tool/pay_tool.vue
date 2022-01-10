@@ -84,7 +84,7 @@
 				coupon_id: "",
 				coupon_guid: "",
 				coupon_list: null,
-				paytool: 'sinopay',
+				paytool: '',
 				info: {},
 				money: 0,
 				pwdFormDialog: false,
@@ -161,7 +161,7 @@
 				if(this.paytool == 'sinopay') {
 					this.pwdFormDialog = true;
 				}else if(this.paytool == 'wx') {
-					window.location.href = `/weixin_pay.html?order_id=${this.order_id}&coupon_id=${this.coupon_id}&coupon_guid=${this.coupon_guid}`
+					// window.location.href = `/weixin_pay.html?order_id=${this.order_id}&coupon_id=${this.coupon_id}&coupon_guid=${this.coupon_guid}`
 				}
 			},
 			submitForm(formName) {

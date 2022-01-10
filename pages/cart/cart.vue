@@ -351,9 +351,11 @@
 						left: 0;
 						z-index: 200;
 						width: 100%;
+						min-width: 1000px;
 						.tj-box {
 							background-color: #fff;
-							width: 1100px;
+							width: calc(80% - 200px);
+							min-width: 1000px;
 							transform: translateX(100px);
 							margin: 0 auto;
 						}

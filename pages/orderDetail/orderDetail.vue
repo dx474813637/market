@@ -348,7 +348,13 @@
 		
 		<el-dialog class="coupon-table" title="我的优惠券" :visible.sync="couponShow" width="70%">
 		  <el-table height="400" :data="info.coupon" ref="couponTable" highlight-current-row @current-change="handleCurrentChange">
-		    <el-table-column property="id" label="id" width="150"></el-table-column>
+		    <el-table-column label="id" width="150">
+				<template slot-scope="scope">
+					<i class="el-icon-check u-m-r-10 d-danger-color" v-if="confirmCoupon_id == scope.row.id"></i>
+					{{scope.row.id}}
+				</template>
+				
+			</el-table-column>
 		    <el-table-column property="title" label="优惠劵名称" width="200"></el-table-column>
 		    <el-table-column label="优惠度">
 				<template slot-scope="scope">
@@ -368,9 +374,12 @@
 			<view slot="empty" class="empty-wrap">当前无可使用的优惠券</view>
 		  </el-table>
 		   <span slot="footer" class="dialog-footer u-flex u-col-top">
-			  <span class="footer-sub d-theme-color u-p-r-60" style="font-size: 14px;">{{curTableCoupon}}</span>
+			   <view class="footer-sub d-theme-color u-p-r-60" style="font-size: 14px;">
+				   <view>{{curTableCoupon1}}</view>
+				   <view>{{curTableCoupon2}}</view>
+			   </view>
 		      <el-button @click="couponShow = false">取 消</el-button>
-		      <el-button type="primary" @click="handleConfirmCoupon">确 定</el-button>
+		      <el-button type="primary" @click="handleConfirmCoupon">选择并验证</el-button>
 		    </span>
 		</el-dialog>
 		
@@ -443,6 +452,7 @@
 				id: '',
 				// stepsActive: 3,
 				colGutter: 0,
+				confirmCoupon_id: "",
 				addrData: [{
 				  name: '',
 				  phone: '',
@@ -511,10 +521,26 @@
 			 
 		},
 		computed: {
-			curTableCoupon() {
-				if(!this.currentRow.id) return '当前无选择'
+			curTableCoupon1() {
+				let str1 = '';
+				if(!this.confirmCoupon_id) {
+					str1 = `当前无选择验证通过的优惠券。`
+				}else {
+					str1 = `当前已选择验证通过【id：${this.confirmCoupon_id}】优惠券。`
+				}
+				str1 += `备注：只有选择验证通过的优惠券才能在支付订单操作中生效。`
+				return str1 
+			},
+			curTableCoupon2() {
+				let str2 = ''
 				let coupon = this.currentRow
-				return `当前勾选【id：${coupon.id}】【${coupon.title}】优惠券。点击【确认】优惠即可生效，此行为不可撤销`
+				if(!coupon.id) {
+					str2 = `当前表格无勾选。`
+				}else {
+					str2 = `当前表格选择【id：${coupon.id}】【${coupon.title}】优惠券。`
+				}
+				str2 += `点击【选择并验证】验证优惠券是否可用。`
+				return str2
 			},
 			curTableAddr() {
 				if(!this.currentRow_addr.id) return '当前无选择'
@@ -542,18 +568,22 @@
 			},
 			// 支付
 			handlePayOrder() {
-				if(true) {
+				if(!this.confirmCoupon_id && this.info.coupon.length > 0) {
 					this.$confirm(`有可使用的优惠项，是否放弃优惠直接支付订单?`, '提示', {
 						confirmButtonText: '狠心放弃优惠',
 						cancelButtonText: '看看优惠',
 						type: 'warning'
 					}).then(() => {
 						uni.navigateTo({
-							url: `/pages/pay_tool/pay_tool?order_id=${this.id}&&coupon_id=${this.info.list.coupon_id}`
+							url: `/pages/pay_tool/pay_tool?order_id=${this.id}&coupon_id=${this.confirmCoupon_id}`
 						})
 					}).catch((e) => {
 						this.handleShowCouponBox()
 					});
+				}else {
+					uni.navigateTo({
+						url: `/pages/pay_tool/pay_tool?order_id=${this.id}&coupon_id=${this.confirmCoupon_id}`
+					})
 				}
 			},
 
@@ -592,7 +622,7 @@
 				// console.log(val)
 				this.currentRow = val;
 			},
-			//使用优惠券
+			//验证优惠券是否适用
 			async handleConfirmCoupon() {
 				uni.showLoading({
 					title: '正在处理中'
@@ -601,16 +631,20 @@
 					id: this.currentRow.cid,
 					order_id: this.id
 				}})
-				if(res.code == 2) return false
+				if(res.code != 1) {
+					this.handleCurrentChange({})
+					return
+				}
+				this.confirmCoupon_id = this.currentRow.id
 				this.$message({
 					type: 'success',
-					message: '优惠券使用成功!'
+					message: '该优惠券可以使用!'
 				});
 				this.handleShowCouponBox()
-				uni.showLoading({
-					title: '获取最新数据中'
-				})
-				await this.getData()
+				// uni.showLoading({
+				// 	title: '获取最新数据中'
+				// })
+				// await this.getData()
 				
 			},
 			

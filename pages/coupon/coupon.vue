@@ -19,10 +19,22 @@
 						<u-subsection activeColor="#ed5656" fontSize="14" :list="btnlist" mode="button" :current="btnIndex" @change="handlechangeBtnsIndex"></u-subsection>
 					</view> -->
 					
-					<view class="content-list-wrap u-flex u-flex-wrap">
-						<view class="list-item" v-for="item in dataList" :key="item.id">
-							<d-coupon-card :list="item"></d-coupon-card>
-						</view>
+					<view class="content-list-wrap u-flex u-flex-wrap"
+						:class="{
+							'u-row-center': !dataList || dataList.length == 0
+						}"
+					>
+						<template v-if="dataList && dataList.length > 0">
+							<view class="list-item" v-for="item in dataList" :key="item.id">
+								<d-coupon-card :list="item"></d-coupon-card>
+							</view>
+						</template>
+						<template v-else>
+							<view class="u-flex u-row-center u-p-t-40 u-p-b-40">
+								<el-empty description="列表为空"></el-empty>
+							</view>
+						</template>
+						
 					</view>
 					<!-- <div class="content-page-wrap">
 						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"

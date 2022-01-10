@@ -130,7 +130,7 @@
 					  type: 'error',
 					  callback: () => {
 							uni.navigateTo({
-								url: "/pages/index/index"
+								url: "/pages/user/user"
 							})
 					  }
 				});

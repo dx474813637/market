@@ -245,12 +245,11 @@
 					if (valid) {
 						
 						let res = await this.$http.get('User/sinopay_create', {
-							params: this.params
+							params: this.paramsObj
 						})
 						if(res.code != 1) return;
 						this.$confirm(res.msg, '消息', {
-						  confirmButtonText: '开通资金账户',
-						  cancelButtonText: '返回资金中心',
+						  confirmButtonText: '返回资金中心',
 						  type: 'success'
 						}).then(() => {
 						  uni.navigateTo({

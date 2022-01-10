@@ -139,14 +139,24 @@
 		      <el-input v-model="outlineform.content" autocomplete="off"></el-input>
 		    </el-form-item>
 		    <el-form-item label="图片">
-				<u-upload
-					:fileList="fileList1"
-					@afterRead="afterRead"
-					@delete="deletePic"
-					name="uploadImg"
-					:maxCount="1"
-					ref="uploadImg"
-				></u-upload>
+				<template v-if="outlineform.pic">
+					<view class="img-p">
+						<el-image :src="outlineform.pic"></el-image>
+						<el-button type="danger" icon="el-icon-delete" @click="deletePic"  circle></el-button>
+					</view>
+				</template>
+				<template v-else>
+					<u-upload
+						:fileList="fileList1"
+						@afterRead="afterRead"
+						@delete="deletePic"
+						name="uploadImg"
+						:maxCount="1"
+						ref="uploadImg"
+					></u-upload>
+				</template>
+				
+				
 		    </el-form-item>
 		  </el-form>
 		  <div slot="footer" class="dialog-footer">
@@ -158,6 +168,7 @@
 </template>
 
 <script>
+	import { pathToBase64, base64ToPath } from 'image-tools'
 	export default {
 		data() {
 			return {
@@ -194,27 +205,28 @@
 			uni.showLoading()
 			await this.getData()
 			
+			 
+			
 		},
 		computed: {
 			
 		},
 		methods: {
 			afterRead(e) {
-				console.log(e.file)
-				if (window.FileReader) {
-					var reader = new FileReader();                        
-					reader.readAsDataURL(e.file.thumb); 
-						 
-					 reader.onload = () => {
-						 console.log(reader.result)
-						 this.outlineform.pic = reader.result
-					 }
-				}else {
-					alert("浏览器版本不兼容");
-				}
+				console.log(e)
+				pathToBase64(e.file.url)
+				  .then(base64 => {
+					this.outlineform.pic = base64
+					this.fileList1 = [{url: e.file.url}]
+				  })
+				  .catch(error => {
+					  this.$message.error('参数有误')
+				    console.error(error)
+				  })
 			},
 			deletePic(event) {
-				
+				this.outlineform.pic = ""
+				this.fileList1 = []
 			},
 			async getData() {
 				let data = await this.$http.get('credit_detail', {
@@ -225,6 +237,7 @@
 				if(data.code != 1) return
 				this.info = data.list
 				this.outlineform.content = this.info.credit_offline.content
+				this.outlineform.pic = this.info.credit_offline.pic
 				this.$message({
 					type: 'success',
 					message: '数据加载完成!'
@@ -253,11 +266,11 @@
 				await this.getData()
 			},
 			async handleOutLine() {
-				let res = await this.$http.get('offline_change', {params: {
+				let res = await this.$http.post('offline_change', {
 					id: this.info.order_id,
 					content: this.outlineform.content,
-					pic: '' 
-				}})
+					pic: this.outlineform.pic
+				})
 				if(res.code != 1) return;
 				this.outlineFormDialog = false
 				this.$message({
@@ -290,6 +303,14 @@
 </script>
 
 <style scoped lang="scss">
+	.img-p {
+		position: relative;
+		.el-button {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+		}
+	}
 	.wrapper {
 		 
 		.wrap-item {

@@ -8,9 +8,9 @@ export default [
 			{
 				label: '个人中心',
 				type: 'link-navigator',
-				url: '/pages/index/index',
+				url: '/pages/user/user',
 				icon: '',
-				active: 'index',
+				active: 'user',
 				index: '1-1',
 			},
 			{

@@ -238,14 +238,16 @@
 				if(this['SendMsgDisabled_'+type]) return
 				this['SendMsgDisabled_'+type] = true;
 				this.$nextTick(() =>{
-					this.$refs['codeCountDown_'+name].start()
+					this.$refs['codeCountDown_'+type].start()
 				})
 				let res = await this.$http.get('User/passwd_sendsms')
-				if(res.code != 1) return;
-				this.$message({
-					type: 'success',
-					message: '短信验证已发送'
-				});
+				if(res.code == 1) {
+					this.$message({
+						type: 'success',
+						message: '短信验证已发送'
+					});
+				}
+				
 			},
 			handleCountDownFinsh(name) {
 				this['SendMsgDisabled_'+name] = false;
@@ -298,6 +300,12 @@
 	.getCode {
 		display: block;
 		width: 100%;
+		.u-count-down {
+			/deep/ .u-count-down__text {
+				line-height: 1em;
+				color: inherit;
+			}
+		}
 	}
 
 	.wrapper {

@@ -25,10 +25,10 @@
 							    <view slot="header" class="clearfix">
 									<view class="u-flex u-row-between">
 										<view class="item u-flex">
-											<view class="name">{{sinopay.name}} （账号：{{sinopay.bind_info.market_login}}）</view>
+											<view class="name">{{sinopay.name}} （账号：{{sinopay.bind_info.sinopay_login}}）</view>
 											<navigator 
 												v-if="sinopay.bind_info.state != 2" 
-												:url="`/pages/bankcard_bind/bankcard_bind?user_fundaccno=${walletInfo.user_fundaccno_b}`"
+												:url="`/pages/bankcard_bind/bankcard_bind?user_fundaccno=${walletInfo.info.user_fundaccno}`"
 											>
 												<el-button round class="u-m-l-30" type="primary" plain size="mini">绑卡认证</el-button>
 											</navigator>
@@ -105,14 +105,14 @@
 									</view>
 									<view class="c-m-title">充值记录</view>
 								</navigator>
-								<template v-if="walletInfo.info">
+								<!-- <template v-if="walletInfo.info">
 									<navigator url="/pages/sinopay_account/sinopay_account?type=2" class="c-m-item u-border u-flex u-row-center">
 										<view class="icon-wrap">
 											<i class="custom-icon custom-icon-accountbook"></i>
 										</view>
 										<view class="c-m-title">收款账户<text>{{sinopay.user_fundaccno_s}}</text></view>
 									</navigator>
-								</template>
+								</template> -->
 								
 							</view>
 						</el-card>
@@ -122,31 +122,39 @@
 							<view slot="header" class="clearfix">
 								<view class="u-flex u-row-between">
 									<view>绑卡</view>
-									<navigator class="u-font-28 d-theme-color" url="/pages/bankcard_list/bankcard_list">管理</navigator>
+									<navigator class="u-font-28 d-theme-color" url="/pages/bankcard/bankcard">管理</navigator>
 								</view>
 							</view>
-							<view class="text item ">
-								<scroll-view 
-									scroll-x 
-									show-scrollbar
-								>
-									<view  class="card-list u-flex">
-										<view class="item-card">
-											<d-bank-card cardNum="" bankName="中国工商银行"></d-bank-card>
-										</view>
-										<view class="item-card">
-											<d-bank-card cardNum="" bankName="中国工商银行"></d-bank-card>
-										</view>
-										<view class="item-card">
-											<d-bank-card cardNum="" bankName="中国工商银行"></d-bank-card>
-										</view>
-										<view class="item-card">
-											<d-bank-card cardNum="" bankName="中国工商银行"></d-bank-card>
+							<view class="text item " style="min-height: 50px;">
+								<template v-if="card_loading">
+									<view class="u-flex u-row-center">
+										<i class="el-icon-loading"></i>
+										<text class="u-p-l-20">正在加载</text>
+									</view>
+								</template>
+								<template v-else-if="card_list.length > 0">
+									<scroll-view
+										scroll-x 
+										show-scrollbar
+									>	
+										<view  class="card-list u-flex">
+											<navigator
+												:url="`/pages/bankcard_detail/bankcard_detail?user_fundaccno=${sinopay.user_fundaccno_b}&bind_id=${item.id}`"
+												class="item-card"
+												v-for="item in card_list" 
+												:key="item.id"
+											>
+												<d-bank-card :cardNum="item.bank_accno" :bankName="item.bank_name"></d-bank-card>
+											</navigator>
+											
 										</view>
 										
-									</view>
-									
-								</scroll-view>
+									</scroll-view>
+								</template>
+								<template v-else>
+									<el-empty description="无数据"></el-empty>
+								</template>
+								
 							</view>
 						</el-card>
 					</view>
@@ -184,25 +192,56 @@
 					info: {}
 				},
 				State: 0,
+				card_loading: false,
+				card_list: []
 			}
 		}, 
 		async onLoad() {
 			// this.showRegDialog()
 			uni.showLoading()
+			this.card_loading = true;
 			await this.getData()
+			await this.getbankCard()
 		},
 		computed: {
-			...mapState(['sinopay', 'user']),
+			...mapState(['sinopay', 'user', 'sinopayLimit']),
 		},
 		methods: {
-			...mapMutations(['updateSinopay']),
+			...mapMutations(['updateSinopay', 'updateSinopayLimit']),
 			async getData() {
-				let data = await this.$http.get('moneyCenter3')
-				this.updateSinopay(data.list);
-				this.walletInfo = data.user_fundaccno_b;
-				if(data.State == 1) {
+				let res = await this.$http.get('moneyCenter3')
+				this.updateSinopay(res.list);
+				this.updateSinopayLimit(res.State)
+				this.walletInfo = res.user_fundaccno_b;
+				if(res.State == 1) {
 					this.dialogVisible = true
 				}
+			},
+			async getbankCard() {
+				if(this.sinopayLimit == 1) return
+				this.card_loading = true;
+				let res = await Promise.all([
+					this.$http.get('bankcard', {
+						params: {
+							user_fundaccno: this.walletInfo.info.user_fundaccno,
+							cate: 0
+						}
+					}),
+					this.$http.get('bankcard', {
+						params: {
+							user_fundaccno: this.walletInfo.info.user_fundaccno,
+							cate: 2
+						}
+					}),
+				
+				])
+				let res1 = res[0].list ? res[0].list.list : []
+				let res2 = res[1].list
+				this.card_list = [
+					...res1,
+					...res2,
+				];
+				this.card_loading = false
 			},
 			handleChangeFlag() {
 				this.dialogVisible = !this.dialogVisible

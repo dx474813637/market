@@ -73,7 +73,7 @@
 								<view class="sinopay-info">{{info.info.bal_freeze}}</view>
 							</el-col>
 						</el-row>
-						<el-row type="flex" align="middle">
+						<!-- <el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">同名账户</view>
 							</el-col>
@@ -82,7 +82,7 @@
 									<el-button type="text" class="u-p-0" @click="handleGoRelationAcc">{{info.info.relation_id}}</el-button>
 								</view>
 							</el-col>
-						</el-row>
+						</el-row> -->
 						<!-- <el-row type="flex" align="middle">
 							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">提现列表</view>
@@ -107,13 +107,13 @@
 								</view>
 							</el-col>
 						</el-row>
-						<el-row type="flex" align="middle">
+						<el-row type="flex" align="middle" v-if="list.bind_info.state != 2">
 							<el-col :span="5" class="sinopay-label-col">
 								<view class="sinopay-label">认证并绑卡</view>
 							</el-col>
 							<el-col>
 								<view class="sinopay-info">
-									<navigator url="/pages/bankcard_bind/bankcard_bind">
+									<navigator :url="`/pages/bankcard_bind/bankcard_bind?user_fundaccno=${list[type == 2? 'user_fundaccno_s' : 'user_fundaccno_b']}`">
 										<el-button type="primary" plain size="mini">请绑卡认证</el-button>
 									</navigator>
 								</view>
@@ -174,17 +174,20 @@
 			return {
 				menuActive: '3-3',
 				type: "1", //1 付款  2 收款
-				tableData: [
-					{
-						id: '330204199401258774',
-						name: '宗师',
-						bank: '中国农业银行股份有限公司',
-						bankid: '955****237714',
-						status: '已绑定'
-					}
-				],
+				// tableData: [
+				// 	{
+				// 		id: '330204199401258774',
+				// 		name: '宗师',
+				// 		bank: '中国农业银行股份有限公司',
+				// 		bankid: '955****237714',
+				// 		status: '已绑定'
+				// 	}
+				// ],
 				info: {
 					info: {}
+				},
+				list: {
+					bind_info: {}
 				}
 			}
 		}, 
@@ -219,7 +222,8 @@
 		methods: {
 			async getData() {
 				let data = await this.$http.get(this.apiUrl)
-				console.log(data)
+				// console.log(data)
+				this.list = data.list
 				this.info = data[this.type == 2 ? 'user_fundaccno_s' : 'user_fundaccno_b']
 			},
 			async handleGoRelationAcc() {

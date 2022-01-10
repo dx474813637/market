@@ -28,9 +28,9 @@
 				<view class="user-drop">
 					<view class="drop-box">
 						<view class="box-header u-border-bottom">
-							<view class="name u-line-1 u-m-b-10">18757125555</view>
+							<view class="name u-line-1 u-m-b-10">{{user.name}}</view>
 							<view class="id u-flex u-line-1">
-								<text>ID:123456789</text>
+								<text>{{user.poster}}</text>
 								<!-- <el-button type="primary" class="copy-btn" plain size="mini">复制</el-button> -->
 							</view>
 						</view>
@@ -40,34 +40,7 @@
 									<text>购物车</text>
 								</view>
 								<view class="a-right">
-									<text class="num">13</text>
-								</view>
-								
-							</navigator>
-							<navigator url="" class="item u-flex u-row-between">
-								<view class="a-left">
-									<text>购物车</text>
-								</view>
-								<view class="a-right">
-									<text class="num">13</text>
-								</view>
-								
-							</navigator>
-							<navigator url="" class="item u-flex u-row-between">
-								<view class="a-left">
-									<text>购物车</text>
-								</view>
-								<view class="a-right">
-									<text class="num">13</text>
-								</view>
-								
-							</navigator>
-							<navigator url="" class="item u-flex u-row-between">
-								<view class="a-left">
-									<text>购物车</text>
-								</view>
-								<view class="a-right">
-									<text class="num">13</text>
+									<text class="num">{{cartNumTotal}}</text>
 								</view>
 								
 							</navigator>
@@ -88,12 +61,20 @@
 </template>
 
 <script>
+	import {mapState, mapGetters} from 'vuex'
 	export default {
 		name:"d-header",
 		data() {
 			return {
 				kw: ""
 			};
+		},
+		computed: {
+			...mapState(['cart', 'user']),
+			...mapGetters(['cartNumTotal'])
+		},
+		onLoad() {
+			
 		}
 	}
 </script>
@@ -170,6 +151,8 @@
 					overflow: hidden;
 					.box-header {
 						padding: 15px 20px 10px;
+						background-color: $theme-color;
+						color: #fff;
 						.name {
 							
 						}
@@ -179,7 +162,7 @@
 						}
 						.id {
 							font-size: 12px;
-							color: #999;
+							color: #ccc;
 							padding-right: 5px;
 						}
 					}

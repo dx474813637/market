@@ -162,7 +162,7 @@
 			uni.showLoading()
 			await this.getData()
 			await this.checkReginalData()
-			console.log(this.reginal_list)
+			// console.log(this.reginal_list)
 		},
 		computed: {
 			...mapState(['reginal_list']),
@@ -250,7 +250,7 @@
 				})
 			},
 			handleChange(value) {
-				console.log(this.addrForm.regional_name);
+				// console.log(this.addrForm.regional_name);
 			},
 			async setDefaultAddr(data) {
 				this.renderFormData(data)

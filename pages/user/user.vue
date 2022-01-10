@@ -12,10 +12,12 @@
 							<view class="item u-flex">
 								<text>用户名：{{user.name}}，欢迎您</text>
 							</view>
-							<view class="item u-flex">
+							<view class="item u-flex" v-if="!user.name">
 								<text>创建AI智能名片</text>
 								<text class="d-theme-color u-p-l-20 u-p-r-20">开启营销之旅</text>
-								<el-button size="mini" type="primary">立即开启</el-button>
+								<el-button size="mini" type="primary">
+									<navigator url="/pages/memberInfo/memberInfo">立即开启</navigator>
+								</el-button>
 							</view>
 						</view>
 						<view class="item-center u-flex u-row-between">
@@ -24,20 +26,20 @@
 							</view>
 							<view class="i-c-data u-flex u-row-around">
 								<navigator url="/pages/orderList/orderList" class="item-d u-flex">
-									<view class="i-d-num">{{my_data.order}}</view>
+									<view class="i-d-num">{{my_data.order || 0}}</view>
 									<view class="i-d-title">我的订单</view>
 								</navigator>
 								<navigator url="/pages/money_center/money_center" class="item-d u-flex">
-									<view class="i-d-num">{{my_data.account}}</view>
+									<view class="i-d-num">{{my_data.account || 0}}</view>
 									<view class="i-d-title">支付余额</view>
 								</navigator>
 								<navigator url="/pages/coupon/coupon" class="item-d u-flex">
-									<view class="i-d-num">{{my_data.coupon}}</view>
+									<view class="i-d-num">{{my_data.coupon || 0}}</view>
 									<view class="i-d-title">优惠券</view>
 								</navigator>
 							</view>
 							<view class="i-c-btns u-flex">
-								<navigator url="/pages/withdrawal/withdrawal" class="item-btn">
+								<navigator url="/pages/recharge/recharge" class="item-btn">
 									<el-button type="primary">在线充值</el-button>
 								</navigator>
 							</view>
@@ -212,6 +214,9 @@
 </script>
 
 <style scoped lang="scss">
+	.el-table {
+		min-height: 240px;
+	}
 	.before-load-wrap {
 		height: 240px;
 	}

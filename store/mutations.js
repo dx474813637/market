@@ -5,7 +5,11 @@ export const mutations = {
 		state.menuActive = index
 	},
 	updateSinopay(state, info) {
+		if(!info.hasOwnProperty('bind_info')) info.bind_info = {}
 		state.sinopay = info
+	},
+	updateSinopayLimit(state, info) {
+		state.sinopayLimit = info
 	},
 	updateReginalData(state, info) {
 		state.reginal_list = info

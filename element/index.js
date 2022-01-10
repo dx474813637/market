@@ -42,7 +42,8 @@ import tabPane from 'element-ui/lib/tab-pane';
 import message from 'element-ui/lib/message';
 import message_box from 'element-ui/lib/message-box';
 import loading from 'element-ui/lib/loading';
-
+import empty from 'element-ui/lib/empty';
+empty
 
 const element = {
 	install: function(Vue) {
@@ -52,6 +53,7 @@ const element = {
 		Vue.prototype.$confirm = message_box.confirm;
 		Vue.prototype.$prompt = message_box.prompt;
 		Vue.prototype.$message = message;
+		Vue.use(empty)
 		Vue.use(loading)
 		Vue.use(inputNumber)
 		Vue.use(tabs)

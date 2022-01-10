@@ -23,7 +23,11 @@
 							:current="btnIndex" @change="handlechangeBtnsIndex"></u-subsection>
 					</view>
 					<template v-if="btnlist[btnIndex].cate != 3">
-						<view class="content-list-wrap u-flex u-flex-wrap">
+						<view class="content-list-wrap u-flex u-flex-wrap"
+							:class="{
+								'u-row-center': !cardList || cardList.length == 0
+							}"
+						>
 							<navigator 
 								:url="`/pages/bankcard_detail/bankcard_detail?user_fundaccno=${sinopay.user_fundaccno_b}&bind_id=${item.id}`" 
 								class="list-item"
@@ -32,6 +36,9 @@
 							>
 								<d-bank-card :cardNum="item.bank_accno" :bankName="item.bank_name"></d-bank-card>
 							</navigator>
+							<template v-if="!cardList || cardList.length == 0">
+								<el-empty description="无数据"></el-empty>
+							</template>
 						</view>
 					</template>
 					<template v-else>

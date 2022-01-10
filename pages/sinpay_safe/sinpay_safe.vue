@@ -104,6 +104,7 @@
 		methods: {
 			...mapActions(['getSinopay']),
 			handleSetOrUpdate() {
+				
 				if(this.sinopay.sinopay_pay_pass == 1) {
 					uni.navigateTo({
 						url: '/pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd?type=update'

@@ -30,7 +30,7 @@
 								<el-input v-model="ruleForm.sinopay"></el-input>
 							</el-form-item>
 							<el-form-item label="sinopay密码" prop="sinopay_pwd">
-								<el-input v-model="ruleForm.sinopay_pwd"></el-input>
+								<el-input type="password" v-model="ruleForm.sinopay_pwd" show-password></el-input>
 							</el-form-item>
 							<template v-if="typeForm.type == 1 || typeForm.type == 2">
 								<el-form-item label="姓名" prop="name">
@@ -122,7 +122,7 @@
 			params() {
 				let params = {
 					sinopay: this.ruleForm.sinopay,
-					sinopay_pwd: this.ruleForm.sinopay,
+					sinopay_pwd: this.ruleForm.sinopay_pwd,
 				}
 				if(this.typeForm.type == '1' || this.typeForm.type == '2') {
 					params = {
@@ -162,8 +162,7 @@
 						})
 						if(res.code != 1) return;
 						this.$confirm(res.msg, '消息', {
-						  confirmButtonText: '开通资金账户',
-						  cancelButtonText: '返回资金中心',
+						  confirmButtonText: '返回资金中心',
 						  type: 'success'
 						}).then(() => {
 						  uni.navigateTo({

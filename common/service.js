@@ -7,7 +7,7 @@ http.setConfig((config) => { /* 设置全局配置 */
 	config.baseURL = 'http://market.netsun.testwebsite.cn/' /* 根域名不同 */
 	config.header = {
 		...config.header,
-		// 'content-type': 'application/x-www-form-urlencoded',
+		'content-type': 'application/x-www-form-urlencoded',
 		// 'appid': 10000,
 		// 'appsecret': '7923FoGlaAlRnbpfl+lepwzh/2lVLDAnb8gyRDSpJKX6TJLW9CTXfW4',
 		// 'xcxlogin': extConfig.attr.login,
@@ -39,6 +39,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
 			}
 		}
 	} 
+	
 	return response.data
 }, (response) => { // 请求错误做点什么。可以使用async await 做异步操作
 	console.log(response)

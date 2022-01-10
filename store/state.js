@@ -8,6 +8,7 @@ export const state = {
 	cart: uni.getStorageSync('cart') || [],
 	reginal_list: [],
 	user: uni.getStorageSync('market_user') || {},
+	sinopayLimit: -1,
 	sinopay: {
 		// business_flag 
 		// lecerti_code 法人身份证

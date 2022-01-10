@@ -4,13 +4,15 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index",
+			"path": "pages/user/user",
+			"name": "user__user",
 			"style": {
 				"navigationBarTitleText": "market"
 			}
 		}
 	    ,{
             "path" : "pages/cart/cart",
+			"name": "user__cart",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -20,6 +22,7 @@
         }
         ,{
             "path" : "pages/memberInfo/memberInfo",
+			"name": "user__memberInfo",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -29,6 +32,7 @@
         }
         ,{
             "path" : "pages/log/log",
+			"name": "user__log",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -38,6 +42,7 @@
         }
         ,{
             "path" : "pages/memberSafe/memberSafe",
+			"name": "user__memberSafe",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -47,6 +52,7 @@
         }
         ,{
             "path" : "pages/memberSafe_pwd/memberSafe_pwd",
+			"name": "user__memberSafe_pwd",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -56,6 +62,7 @@
         }
         ,{
             "path" : "pages/memberSafe_email/memberSafe_email",
+			"name": "user__memberSafe_email",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -65,6 +72,7 @@
         }
         ,{
             "path" : "pages/memberSafe_phone/memberSafe_phone",
+			"name": "user__memberSafe_phone",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -74,6 +82,7 @@
         }
         ,{
             "path" : "pages/orderList/orderList",
+			"name": "user__orderList",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -83,6 +92,7 @@
         }
         ,{
             "path" : "pages/addr/addr",
+			"name": "user__addr",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -92,6 +102,7 @@
         }
         ,{
             "path" : "pages/coupon/coupon",
+			"name": "user__coupon",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -101,6 +112,7 @@
         }
         ,{
             "path" : "pages/orderDetail/orderDetail",
+			"name": "user__orderDetail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -110,6 +122,7 @@
         }
         ,{
             "path" : "pages/orderConfirm/orderConfirm",
+			"name": "user__orderConfirm",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -119,6 +132,7 @@
         }
         ,{
             "path" : "pages/sinopay/sinopay",
+			"name": "sinopay__sinopay",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -128,6 +142,7 @@
         }
         ,{
             "path" : "pages/sinopay_account_list/sinopay_account_list",
+			"name": "sinopay__sinopay_account_list",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -137,6 +152,7 @@
         }
         ,{
             "path" : "pages/sinopay_account/sinopay_account",
+			"name": "sinopay__sinopay_account",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -146,6 +162,7 @@
         }
         ,{
             "path" : "pages/sinopay_pay_list/sinopay_pay_list",
+			"name": "sinopay__sinopay_pay_list",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -155,6 +172,7 @@
         }
         ,{
             "path" : "pages/recharge_list/recharge_list",
+			"name": "sinopay__recharge_list",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -164,6 +182,7 @@
         }
         ,{
             "path" : "pages/withdraw_list/withdraw_list",
+			"name": "sinopay__withdraw_list",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -173,6 +192,7 @@
         }
         ,{
             "path" : "pages/withdraw_detail/withdraw_detail",
+			"name": "sinopay__withdraw_detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -182,6 +202,7 @@
         }
         ,{
             "path" : "pages/recharge_detail/recharge_detail",
+			"name": "sinopay__recharge_detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -191,6 +212,7 @@
         }
         ,{
             "path" : "pages/bankcard_detail/bankcard_detail",
+			"name": "sinopay__bankcard_detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -200,6 +222,7 @@
         }
         ,{
             "path" : "pages/bankcard_bind/bankcard_bind",
+			"name": "sinopay__bankcard_bind",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -209,6 +232,7 @@
         }
         ,{
             "path" : "pages/withdraw/withdraw",
+			"name": "sinopay__withdraw",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -218,6 +242,7 @@
         }
         ,{
             "path" : "pages/recharge/recharge",
+			"name": "sinopay__recharge",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -227,6 +252,7 @@
         }
         ,{
             "path" : "pages/money_center/money_center",
+			"name": "sinopay__money_center",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -236,6 +262,7 @@
         }
         ,{
             "path" : "pages/bankcard_list/bankcard_list",
+			"name": "sinopay__bankcard_list",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -245,6 +272,7 @@
         }
         ,{
             "path" : "pages/sinopay_reg/sinopay_reg",
+			"name": "sinopay__sinopay_reg",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -254,6 +282,7 @@
         }
         ,{
             "path" : "pages/sinopay_bind/sinopay_bind",
+			"name": "sinopay__sinopay_bind",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -263,6 +292,7 @@
         }
         ,{
             "path" : "pages/sinpay_safe/sinpay_safe",
+			"name": "sinopay__sinpay_safe",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -272,6 +302,7 @@
         }
         ,{
             "path" : "pages/sinopay_safe_login_pwd/sinopay_safe_login_pwd",
+			"name": "sinopay__sinopay_safe_login_pwd",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -281,6 +312,7 @@
         }
         ,{
             "path" : "pages/sinopay_safe_pay_pwd/sinopay_safe_pay_pwd",
+			"name": "sinopay__sinopay_safe_pay_pwd",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -290,6 +322,7 @@
         }
         ,{
             "path" : "pages/sinopay_safe_pay_forget/sinopay_safe_pay_forget",
+			"name": "sinopay__sinopay_safe_pay_forget",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -299,6 +332,7 @@
         }
         ,{
             "path" : "pages/bankcard/bankcard",
+			"name": "sinopay__bankcard",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -308,6 +342,7 @@
         }
         ,{
             "path" : "pages/pay_tool/pay_tool",
+			"name": "user__pay_tool",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -317,6 +352,7 @@
         }
         ,{
             "path" : "pages/credit/credit",
+			"name": "user__credit",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -326,6 +362,7 @@
         }
         ,{
             "path" : "pages/creditDetail/creditDetail",
+			"name": "user__creditDetail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -335,6 +372,7 @@
         }
         ,{
             "path" : "pages/billDetail/billDetail",
+			"name": "sinopay__billDetail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

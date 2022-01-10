@@ -12,7 +12,7 @@
 							<navigator open-type="navigateBack" class="u-m-r-20 d-theme-color">
 								<i class="custom-icon-left-circle custom-icon u-font-36"></i>
 							</navigator>
-							<view class="header-title">申请绑定提现银行卡</view>
+							<view class="header-title">银行卡绑定</view>
 						</view>
 					</view>
 					<view class="form-wrap">
@@ -182,7 +182,7 @@
 		},
 		async onLoad(opt) {
 			if(opt && opt.hasOwnProperty('user_fundaccno')) {
-				this.user_fundaccno = opt.user_fundaccno
+				this.user_fundaccno = this.ruleForm.user_fundaccno = opt.user_fundaccno
 				uni.showLoading()
 				await this.getData()
 			}
